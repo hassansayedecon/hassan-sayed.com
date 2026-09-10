@@ -1,0 +1,2369 @@
+\documentclass[11pt,dvipsnames]{article}
+\usepackage[affil-it]{authblk}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{titling}
+\usepackage{palatino}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{lipsum}
+\usepackage{amsmath,amssymb,amsthm,amscd,graphicx,setspace,mathtools,longtable,subcaption}
+\usepackage{mathrsfs}
+\usepackage{pgfplots}
+\usepackage{MnSymbol,wasysym}
+\usepackage{thm-restate}
+\newcommand{\bb}[1]{\mathbf{#1}}
+\newcommand{\spref}{\succ}
+\newcommand{\wpref}{\succcurlyeq}
+\newcommand{\sprefr}{\succ^R}
+\newcommand{\wprefr}{\succcurlyeq^R}
+\newcommand{\indiff}{\sim}
+\usepackage{tikz}
+\usepackage{subcaption}
+\usepackage{hyperref}
+\usetikzlibrary{arrows,decorations.pathreplacing,calligraphy}
+
+
+\pgfmathdeclarefunction{gauss}{2}{%
+  \pgfmathparse{1/(#2*sqrt(2*pi))*exp(-((x-#1)^2)/(2*#2^2))}%
+}
+
+\usepgfplotslibrary{fillbetween}
+
+\usepackage{apacite}
+\usepackage{natbib}
+
+\usepackage{titling}
+\setlength{\droptitle}{-3cm}
+
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+
+\definecolor{light-gray}{gray}{0.8}
+
+\linespread{1}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{proposition}{Proposition}
+\newtheorem{corollary}{Corollary}
+\newtheorem{exmp}{Example}
+\newtheorem{lemma}{Lemma}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{assumption}{Assumption}
+
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\trace}{\mathrm{tr}}
+
+\definecolor{Persimmon}{rgb}{0.93, 0.35, 0.0}
+
+\declaretheorem[name=Theorem]{thm}
+
+\title{Contracting with Models and Data}
+\date{\today 
+\\UNFINISHED DRAFT DO NOT CIRCULATE,
+\\
+\textbf{\href{https://hassansayedecon.github.io/hassan-sayed.com/SimpleModels.pdf}{Click here}} for latest version of paper.}
+\author{Hassan Sayed
+\thanks{\href{mailto:hsayed@cgdev.org}{hsayed@cgdev.org}, Postdoctoral Scholar, Market Shaping Accelerator.
+I would like to thank Pietro Ortoleva, Xiaosheng Mu, Erzo Luttmer; and participants at the $37^{th}$ Stony Brook Game Theory Conference and the Center for Global Development for productive discussions and feedback.
+}
+}
+
+\begin{document}
+\begin{titlingpage}
+\maketitle 
+\begin{abstract}
+\normalsize
+Many real-world decisions are informed by external data collection and modeling: consultants provide clients ``if-then'' scenarios, portfolio managers present models of stock returns, and AI chatbots offer recommendations based on internal data.
+I study how strategic data collection and model simplification create frictions in these settings. 
+A sender collects data and estimates a model that helps a receiver make a choice.
+The sender may estimate an ``optimistic'' model that neglects tradeoffs the receiver finds important, or a ``pessimistic'' model that exaggerates them.
+I show that senders who estimate optimistic models strategically gather data as ``generalists'' across a wide array of potentially irrelevant choices, while those who estimate pessimistic models gather data as ``specialists'' about a small set of localized choices.
+The receiver's choices are less accurate when she receives a model from a generalist.
+When choices are multivariate, the sender gains by sampling data where different variables are as highly correlated or anticorrelated as possible.
+Strategic data sampling in turn generates gains from artificial \emph{model simplification}: the sender gains more if the receiver believes his model was oversimplified to be optimistic or pessimistic, and gains the most if she believes the sender's model was calibrated to arbitrary parameters.
+Contracting multiple senders generates full learning if their costs of model provision are low, but requires purchasing multiple models and may be accompanied by an increase in prices.
+\end{abstract}
+\end{titlingpage}
+
+
+\onehalfspacing
+
+\section{Introduction}
+Consider an economist tasked with designing a carbon tax on manufacturers.
+While she understands the economics of taxation, she knows little about the relevant science or how the industry may respond to taxation.
+So, she hires a climate scientist to help.
+The scientist collects data, runs simulations, and synthesizes his findings into a \emph{model} that illustrates the costs and benefits of different tax rates.
+This model is valuable because it succinctly describes the effects of the economist's choices, but it also presents frictions.
+The economist cannot audit the information underlying the model --- which may include expertise or proprietary data.
+His model could idiosyncratically capture the effects of a small set of tax rates, or combine information about a wide range of taxes.
+Moreover, the economist and scientist may think about \emph{tradeoffs} differently.
+The scientist may \emph{neglect} some of the negative effects of high taxes, such as higher prices or decreased commercial activity
+Or, he may assume a worst-case scenario and overweight these tradeoffs.
+\emph{Model simplicity} and \emph{uncertainty about underlying data} thus shape the quality of the sender's recommendations.
+
+This example reflects a broader set of interactions where a principal contracts an agent to guide her decisions through modeling.
+A management consultant may inform a CEO's workforce restructuring by providing an ``if-then'' scenario.
+A portfolio manager may organize stock returns data to help a client invest.
+A politician may weave a ``narrative'' model to help voters choose policies.
+Understanding the mapping from data to decisions via models has become especially important with the advent of \emph{AI-based decisionmaking}.
+Any of the principals above may instead ask an AI chatbot for a recommendation.
+However, a chatbot is a blackbox: the principal knows next to nothing about its underlying data or how it was mapped to a recommendation.
+
+
+This paper studies how model simplicity and strategic data collection shape contracting with models and data.
+A receiver (principal) needs to make a choice and contracts a sender (agent) to provide information.
+The sender gathers data and estimates a \emph{model}: a data-generating process (DGP) mapping actions to outcomes.
+The model may be \emph{optimistic} and neglect tradeoffs the receiver finds important, or \emph{pessimistic} and mechanically exaggerate the effect of those same tradeoffs.
+The receiver does not directly observe the data the sender used to estimate his model.
+
+I address four questions.
+How does the receiver learn about the true DGP?
+What kinds of data does the sender gather?
+Can a sender benefit from supplying models that deliberately neglect or overstate tradeoffs, instead of providing the true model?
+Finally, how are these distortions shaped by \emph{competition} among multiple senders?
+
+\paragraph{Model Overview}
+A receiver --- a policymaker, CEO, or voter --- must choose an action $x$ to maximize an outcome $y$ --- such as profits or the value of a public good.
+She believes that the relationship between $y$ and $x$ is given by a set of DGPs that capture a linear benefit and a convex cost or ``loss.''
+The magnitude of this loss is governed by a parameter $\gamma$.
+She hires a sender to acquire information for her.
+The sender samples $x$ values from a distribution by choosing its mean and standard deviation.
+He then observes the corresponding $y$ values, producing data $(y,x)$.
+We highlight two particular forms of data collection.
+A sender positions himself as a ``specialist'' if he estimates models ``locally'' on a small neighborhood of $x$ values.
+He positions himself as a ``generalist'' if he estimates his models ``distantly'' across the largest possible range of $x$ values.
+His sampling choice is unobserved by the receiver.
+
+The sender then fits a model to the data.
+He considers similar models to the receiver, but may model tradeoffs in an oversimplified way.
+He could estimate an ``optimistic'' model that \emph{neglects} costs or losses the receiver considers.
+This could mean he performs a \emph{linear regression} of $y$ on $x$ without considering the nonlinear effects of $x$.
+He could also estimate a ``pessimistic'' model that \emph{exaggerates} tradeoffs and assumes the negative effects of high $x$ are as high as possible.
+The sender's objective wants the receiver to believe the maximum value of $y$ he can expect to achieve is as \emph{high as possible} --- because he receives a cut of the receiver's expected profits or would like to maximize her engagement with his services.
+
+
+\paragraph{Receiver Learning and Sender Sampling}
+The first result is that receiver learning is shaped by the interaction of the sender's modeling limitations with strategic data collection.
+The sender provides a model, shown in purple in the figure below.
+However, the receiver may still entertain alternative models.
+These plausible models may be \emph{steeper} or \emph{shallower} than the sender's original model, depending on the value of $\gamma$.
+When the sender positions himself as a \emph{specialist}, the receiver's set of plausible models is tangent to the sender's model at a single point.
+At $x^*$ --- where the sender's model is maximized --- steeper models lie \emph{below} the sender's model and shallower models \emph{above}.
+When the sender positions himself as a generalist, however, the opposite happens.
+The set of receiver models shift up or down relative to the sender's model, depending on their curvature.
+Steeper models lie \emph{above} the original model and shallower models lie \emph{below}.
+\begin{figure}[H]
+    \caption{Models that receiver entertains when sender provides a model}
+\begin{subfigure}[t]{0.49\textwidth}
+    \begin{tikzpicture}
+    \begin{axis}[width=\textwidth,
+        xmin=0, xmax=1.0,
+        ymin=0, ymax=1.0,
+        axis on top=true,
+        xlabel={Choice $x$},
+        ylabel near ticks,
+        yticklabels={,},
+        xtick={0,1},
+        xticklabels={0,1},
+        extra x ticks={0.77},
+        extra x tick labels={$x^*$},
+        ]
+        \addplot [mark=none, draw=Violet, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-1.1*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-1.4*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-1.8*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.25+0.6*x-2.2*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]{0.25+0.6*x-2.6*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=ForestGreen, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-0.9*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=ForestGreen, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-0.7*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=ForestGreen, domain=0:1, samples=100, ultra thick] {0.25+0.6*x-0.3*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=ForestGreen, domain=0:1, samples=100, ultra thick]{0.25+0.6*x};
+        \addplot [name path=push,mark=none,draw=black,dashed,domain=0:1] coordinates {(0.77,0) (0.77,0.63)};
+	\node at (axis cs:0.25,0.66) {\footnotesize Shallower models};
+	\draw[-] (axis cs:0.25,0.62) -- (axis cs:0.25,0.41);
+	\node at (axis cs:0.5,0.2) {\footnotesize Steeper models};
+	\draw[-] (axis cs:0.5,0.25) -- (axis cs:0.7,0.55);
+
+    \end{axis}
+    \end{tikzpicture}
+
+    \caption{Plausible models under ``specialist'' data collection}
+    \end{subfigure}
+    \hspace{0cm}
+\begin{subfigure}[t]{0.49\textwidth}
+    \begin{tikzpicture}
+    \begin{axis}[width=\textwidth,
+        xmin=0, xmax=1.0,
+        ymin=0, ymax=1.0,
+        axis on top=true,
+        xlabel={Choice $x$},
+        ylabel near ticks,
+        yticklabels={,},
+        xtick={0,1},
+        xticklabels={0,1},
+        extra x ticks={0.77},
+        extra x tick labels={$x^*$},
+        ]
+        \addplot [mark=none, draw=Violet, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-1.1*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-1.4*(x-0.5)^2+0.25*(1.4-1.1)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-1.8*(x-0.5)^2+0.25*(1.8-1.1)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.25+0.6*x-2.2*(x-0.5)^2+0.25*(2.2-1.1)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]{0.25+0.6*x-2.6*(x-0.5)^2+0.25*(2.6-1.1)};
+        \addplot [dashed, mark=none, draw=ForestGreen, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-0.9*(x-0.5)^2+0.25*(0.9-1.1)};
+        \addplot [dashed, mark=none, draw=ForestGreen, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-0.7*(x-0.5)^2+0.25*(0.7-1.1)};
+        \addplot [dashed, mark=none, draw=ForestGreen, domain=0:1, samples=100, ultra thick] {0.25+0.6*x-0.3*(x-0.5)^2+0.25*(0.3-1.1)};
+        \addplot [dashed, mark=none, draw=ForestGreen, domain=0:1, samples=100, ultra thick]{0.25+0.6*x+0.25*(0-1.1)};
+        \addplot [name path=push,mark=none,draw=black,dashed,domain=0:1] coordinates {(0.77,0) (0.77,0.63)};
+	\node at (axis cs:0.23,0.93) {\footnotesize Steeper models};
+	\draw[-] (axis cs:0.23,0.89) -- (axis cs:0.3,0.75);
+	\node at (axis cs:0.55,0.1) {\footnotesize Shallower models};
+	\draw[-] (axis cs:0.55,0.15) -- (axis cs:0.55,0.27);
+
+    \end{axis}
+    \end{tikzpicture}
+
+    \caption{Plausible models under ``generalist'' data collection}
+    \end{subfigure}
+\end{figure}
+This leads to a second set of results: when the sender presents an \emph{optimistic} model, he benefits from positioning himself as a generalist.
+The intuition is that if the sender presents an optimistic model, he is neglecting tradeoffs the receiver finds important.
+This means that the additional models the receiver entertains will be \emph{steeper} than the original model.
+Steeper models lie above the sender's original model when the sender positions himself as a generalist.
+Thus, the sender convinces the receiver he can achieve an even higher expected utility than the sender's original model.
+
+The opposite happens when the sender presents a \emph{pessimistic model}, where he benefits the most from positioning himself as a specialist.
+In this case, any additional receiver models are tangent to the sender's original model.
+These are ``shallower'' than the original model when the sender \emph{exaggerates} tradeoffs, and thus lie above that original model.
+We note that sampling thus has a ``bang-bang'' property: the sender either samples data in the smallest possible neighborhood of a receiver choice or across the largest possible range of choices, rather than an intermediate amount.
+
+This interaction between model misspecification and sampling has implications for receiver welfare.
+We extend the receiver's preferences to account for \emph{forecast error}, in addition to maximizing the expected value of the outcome.
+Under distant sampling, the vertical dispersion across plausible models increases, so if the receiver values forecast accuracy, she prefers local sampling.
+Thus, the receiver learns the true DGP more precisely when the sender is pessimistic and samples \emph{locally}.
+Notably, however, the first-best form of sampling for a sender would be an ``intermediate'' degree of sampling between ``generalism'' and ``specialization.''
+
+Most of the paper presents a model where the receiver's payoff $y$ is \emph{quadratic} in $x$.
+While we assume this functional form for tractability, we also show that the results are robust to the receiver's payoffs being given by a linear benefit less a symmetric, convex loss around a point.
+Although the model without symmetry can prove to be very intractable, we provide a regularity assumption that delivers an analogue of our result: a sender who estimates optimistic models gains more from being a generalist than a specialist, and one who estimates pessimistic models gains more from being a specialist than a generalist.
+
+I also show that the model's results deliver indetical results with \emph{multidimensional choices} --- i.e., when a receiver chooses $x = (x_1,\ldots,x_n)$.
+Multidimensionality also provides insight into how a sender's data sampling may create \emph{correlation} between variables, and how this interacts with how a sender's model considers \emph{interaction effects}.
+I show that if a sender's models tend to \emph{neglect} the effect of an interaction between two variables, he creates a high degree of \emph{collinearity} between those two variables.
+For example, if he underestimates the interactive effect of $x_i$ and $x_j$, he samples data such that $x_i$ is highly correlated with $x_j$.
+If a sender's models tend to \emph{exaggerate} the effect of an interaction, he makes those variables as \emph{anticollinear} as possible: in the example, this means that $x_i$ would be highly correlated with $x_j$.
+
+\paragraph{Gains from Oversimplification}
+Fourth, I show that a sender gains from model oversimplification.
+I characterize when a ``sophisticated'' sender --- who can provide the true model, and thus thinks about tradeoffs in exactly the way the receiver would want --- benefits from the presence of ``simple'' sender who estimates consistently optimistic or pessimistic models.  
+Upon observing a model, the receiver believes she received the correct model from the sophisticated sender or a misspecified model from the simple sender.
+I show that the sophisticated sender always gains when pessimsitic \emph{or} optimistic senders strategically sample: i.e. from ``optimistic'' senders who position themselves as generalists or ``pessimistic'' ones who act as specialists.
+The gain from optimistic senders is asymmetrically larger than for pessimistic senders.
+We thus note that gains from providing optimistic or pessimistic models emerge from the combination of sender model simplicity with strategic sampling.
+
+In addition, I characterize the \emph{optimal distribution} of simpler sender types for the sophisticated sender.
+That is, I answer the following question: if the sophisticated sender could \emph{choose} between senders who estimate optimistic or pessimistic senders, what senders would he pick?
+Should these simple senders sometimes provide the correct models, or always be optimistic or pessimistic?
+I show that this optimal distribution involves choosing an ``arbitrary'' degree of modeling a tradeoff.
+One set of senders is always pessimistic and the other is always optimistic.
+Formally, for each \emph{parameter} $\gamma$ characterizing the degree of the receiver's loss from high $x$, the sophisticated sender creates a simple sender who can \emph{only} model tradeoffs with that $\gamma$ value.
+Those with low $\gamma$ values always estimate optimistic models, and those with high $\gamma$ values always estimate pessimistic models.
+That simple sender then strategically samples data (as a generalist or specialist) so that any additional receiver models always lie above his model.
+Thus, when the sophisticated sender provides a model, the receiver thinks that she either received the true model, or that she received a simpler model.
+But, in the latter case, any additional models she entertains lie \emph{above} the original model, creating an advantage for the sophisticated sender.
+
+This distribution has a real-life analogue, which is \emph{model calibration}.
+Macroeconomists or industrial organization economists, for instance, may calibrate their model parameters using predetermined elasticities from the data, rather than estimating that information organically on original data.
+In this sense, the optimal distribution of sender types involves \emph{calibrating} a fixed (but arbitrary) way of modeling a tradeoff, and then providing that calibrated model to the sender.
+A consulting firm, for instance, may sometimes deploy one of many teams who have fixed (but arbitrary) ways of thinking about tradeoffs.
+Or, an AI company may randomly deploy models calibrated to different levels of tradeoff neglect or exaggeration.
+
+\paragraph{Sender Competition (to fix/formalize)}
+The final set of results studies competition between multiple senders who face overhead costs of providing a model.
+We model two senders who set prices and receive a reputational gain from making $R$ optimistic.
+We show that if the cost of model provision is relatively high, $R$ only buys a model from a single sender who under/overestimates tradeoffs.
+Thus, model simplicity continues to survive into settings with competition.
+However, the subtlety is that because senders receive a reputational gain from providing $R$ a simple model, they may be willing to price their models below cost.
+
+However, if the cost of model provision is relatively low and, in addition, the magnitude of the reputational gain from supplying a simple model is small, a receiver may be willing to purchase models from both senders instead of buying a single simple model from one.
+On the one hand, this generates perfect learning, since $R$ can piece together the true model from both of their pieces of information.
+On the other hand, this erases senders' reputational gain from model simplification.
+Senders are no longer willing to price below cost, generating both an intensive margin (prices) and extensive margin (number of models) discontinuity in expenditures for the sender.
+
+Section \ref{section:setup} lays out the basic model, and I characterize learning in section \ref{section:learning}. Section \ref{section:simple} studies gains from oversimplifying models and the design of an optimal type space for a sophisticated sender. 
+Section \ref{section:competition} investigates how these distortions become change when considering competition between multiple senders.
+Section \ref{section:conclusion} concludes.
+The remainder of this section gives an overview of the literature.
+
+\paragraph{Literature}\label{section:literature}
+This paper broadly adds to our understanding of how receivers learn and senders design information when utilizing \emph{models of the world}.
+Its key contribution is to characterize what \emph{sorts} of data model senders may strategically sample, how incentives to strategically sample data are informed by the simplicity of their models, and how the interaction of both can generate gains from systematically pursuing simple (or arbitrary) models.
+
+Many of the examples in the paper concern \emph{delegation} to experts.
+There is long line of literature --- particularly in organizations and finance --- studying this process, including mistrust in experts \citep{cheng2022distrust}, uncertainty about expertise \citep{kishishita2020not}, and its interaction with persuasion \citep{kolotilin2025persuasion}.
+The key contribution of this paper is to study how delegation and contracting operate when an expert's recommendation comes in the form of a \emph{model} organizing endogeneously collected data.
+The most closely related paper is \citet{li2018delegation}, who study delegation when a portfolio manager provides a model of returns to a client.
+
+
+While there are many papers that study learning from models, much of this literature takes as given the past history of data that model is fit on --- whether that data is exogenous or endogenously generated by a principal's or agent's choices \citep{eliaz2020model, schwartzstein2021using, levy2022misspecified}.
+The present paper, instead, investigates a sender who first chooses to sample data, and then provides the best-fitting model to that data.
+The sender can choose qualitative properties of the data --- notably its mean and standard deviation.
+When the sender is incentivized to make the receiver optimistic, I show that this creates a tractable characterization of data sampling: the sender either locally samples data in the smallest possible neighborhood of a single receiver choice, or as distantly as possible across a wide range of receiver choices.
+This approach contrasts with other papers where data is endogeneously generated either through follow-on evidence generation \citep{dai2026bayesian}, selective disclosure \citep{felgenhauer2014strategic}, nonrandom sampling \citep{di2021strategic}, or sequential data acquisiton with endogeonous stopping \citep{henry2019research}.
+ 
+The use of strategic \emph{sampling} in the present paper in turn interacts with the complexity of a sender's model simplicity to make the receiver believe her expected utility is \emph{higher} than the model provided by the sender.
+This channel through which a receiver can be made more optimistic is thus related to model simplicity and data sampling, as opposed to departures from a status quo or the inclusion of confounding variables, such as in \citet{eliaz2020model}.
+This also distinguishes the paper from work where a receiver selects between different models with different sample sizes and more or less complex models \citep{montiel2022competing}.
+
+Model fit also plays little role in driving the present paper's results on gains from simplicity or strategic sampling; this is in contrast to papers that investigate gains from model-based persuasion that involve trading off model fit and belief manipulability --- such as \citet{schwartzstein2021using}, \citet{aina2023tailored}, \citet{barron2024narrative}, and \citet{aina2025weighting}.
+However, the present paper does show that senders who make receivers more optimistic often create greater \emph{forecast} error for a receiver, suggesting that receiver optimism may come at the cost of uncertainty over models.
+The particular angle the present paper takes is closely related to omitted variable bias --- in that a sender cannot (or refuses to) fully model a tradeoff in the way a receiver would like.
+This connects the paper to work like \citet{levy2022misspecified}, \citet{gleyze2022value}, and \citet{eliaz2025false} --- who show that model misspecification may interact with competitive pressures or uncertainty about data estimation to generate a range of outcomes from improved communication and engagement to political cycles and the prevalence of false models. 
+
+A key finding of this paper is that senders may generally benefit from providing \emph{simpler} models to receivers.
+The idea that senders can benefit from simple models is also captured by \citet{perez2012complicating}, \citet{bloedel2018persuasion}, \citet{lipnowski2020attention}, \citet{eliaz2021strategic}, and \citet{burkovskaya2026causal}. 
+While many of these papers are driven by behavioral assumptions like bounded rationality or rational inattention, the findings in this paper are related to sampling and simplicity: given a sender's model, a receiver will entertain additional models.
+The set of these additional models is determined by the \emph{simplicity} of the sender's model, and the expected utility they generate for the receiver increases or decreases with the spread of the sender's data sampling.
+In particular, the present paper shows that a sender informed of the true model of the world can benefit by making the receiver think his model was estimated by a sender who had an artifically simple model and strategically sampled.
+The most closely related paper is \citet{gleyze2022value}, who show that an informed sender can often gain by delegating model provision to a (potentially misspecified) sender.
+
+The present paper briefly studies how gains from simplicity operate when there is competition among multiple senders for a receiver's business, which relates it to work such as \citet{dasaratha2025markets}.
+Mathematically, receivers in the present paper differ in their ability to \emph{model tradeoffs}, which are related to their ability to estimate models on predetermined \emph{subsets} of a parameter space.
+This characterization of commitment --- as well as the problem of the ``sender-type designer'' --- is thus conceptually related to \citet{bizzotto2026limits}'s characterization of the limits of commitment in quantity-price games.
+
+Finally, because of its reliance on models as information structures, the present paper also adds to a longer literature on (Bayesian) persuasion \citep{kamenica2011bayesian}, as well as persuasion and competition \citep{gentzkow2017bayesian,wang2013bayesian}.
+In particular, receivers in the present paper are uncertain as to the source of data or the broader class of models a sender's model was obtained from.
+This connects the paper to models of persuasion and cheap talk with \emph{uncertainty} about information structures \citep{huang2024learning,min2026information} and ambiguity aversion \citep{colo2024communicating}.
+Conceptually, the insight that some senders' gains from providing simple models can be eroded by sequential information acquisition is similar to that in \citet{matyskova2023bayesian}.
+
+
+
+\section{Model Setup}\label{section:setup}
+We begin by laying out a game between a single receiver $R$ (she) and a single sender $S$ (he). $R$ decides whether she would like to contract the services of a sender $S$.
+$S$ collects data and provides $R$ a model describing that data.
+$R$ utilizes the information provided in $S$'s model to make a decision.
+We abstract from prices and competition, but return to study these questions in Section \ref{section:competition}.
+
+Our running example will be the same as in the introduction: we will consider the case where $R$ is an economist tasked with designing a carbon tax.
+$S$ is a climate scientist who has worked in the private sector.
+He thus has insights into both climate science and how companies may respond to carbon taxes.
+The example will allow us to think through how the different pieces of the model map onto the various contracting scenarios laid out in the motivation.
+
+\subsection{Receiver and Models}
+A receiver $R$ faces a set of choices $X=\mathbb{R}$. Each of these choices maps to a distribution of outcomes $y \in \mathbb{R}$.
+Ex-ante, $R$ does not know the distribution of outcomes. However, she believes that the distribution of $y$ given $x$ can be described by a data-generating process $y = f_R(x)$ for a function $f_R : X \to \mathbb{R}$.
+We refer to $f_R$ as a \textbf{model}.
+We denote $F_R$ as the set of \emph{models} $f_R$ that $R$ entertains.
+%$F_R$ is closed and convex.
+We make the following assumptions on $F_R$.
+\begin{assumption}
+	For each $f_R \in F_R$, we have
+	\begin{align*}
+	f_R(x) = \alpha_0 + \alpha_1 x - \gamma x^2,	
+	\end{align*}
+	where $\alpha_0 \sim P_0^R$ on $\mathbb{R}$, $\alpha_1 \sim P_1^R$ on $\mathbb{R}$, and $\gamma \sim P_\gamma^R$ on $[0,\overline{\gamma}] :=\Gamma$ for measures $P_0^R,P_1^R,P_\gamma^R$.
+	Additionally, for all $\alpha_0,\alpha_0' \in \mathbb{R}$, $P_0^R(\{\alpha_0\})=P_0^R(\{\alpha_0'\})$.
+	\label{assquad}
+\end{assumption}
+Assumption \ref{assquad} says that each of $R$'s functions is concave, and can in particular be expressed as an affine function less a convex, quadratic loss.
+Notably, since $-\gamma x^2$ is concave, the functional form can also represent the consideration of diminishing returns in consumer utility, production, or any other concave function in shaping an outcome.\footnote{We assume a quadratic form for tractability but show that the central intuitions generalize in section \ref{section:general}.}
+The prior over each of the three components is independent.
+The prior over the set of constant terms is flat, i.e. $R$'s true uncertainty is over the curvature of $f_R$.
+
+We will use the notation $q$ to refer to $R$'s belief over the set of models, i.e. her (joint) belief over these three parameters.
+Given a belief $q$ over models, $R$'s expected utility is given by:
+\begin{align*}
+U_q(x) = \mathbb{E}_{q}[f_R(x)].
+\end{align*}
+Her goal is to choose $x$ to maximize $U_q(x)$.
+
+In our running example, $x$ represents a carbon tax rate the economist can choose.
+$y$ represents the welfare of a representative household or voter, whose interests she represents. 
+Higher taxes reduce emissions and improve health outcomes, but may also increase energy prices and reduce private sector activity, which may further affect households differently based on their income.
+Thus, the economist would like to balance these effects and choose the tax rate that maximizes expected welfare.
+Figure \ref{fig:dag} illustrates this idea below.
+\begin{center}
+\begin{figure}[H]
+\caption{Effect of $x$ on $y$ through tradeoffs: example of economist and scientist}
+\centering
+\begin{tikzpicture}[
+    header/.style={font=\bfseries, align=center},
+    grouplabel/.style={font=\itshape\small, align=center},
+    box/.style={align=center, minimum width=3.2cm, minimum height=1cm, font=\small},
+    xybox/.style={align=center, minimum size=1.2cm, font=\large},
+    ->, thick
+]
+
+% Column headers
+\node[header] (h1) at (0, 4) {Carbon Tax};
+\node[header] (h2) at (5, 4) {Effects};
+\node[header] (h3) at (10, 4) {Welfare};
+
+% Column 1: x
+\node[xybox] (x) at (0, 1) {$x$};
+
+% Column 2: effects
+\node[box] (health) at (5, 3)  {Reduced emissions\\[1pt] {\small\itshape (Benefit)}};
+\node[box] (prices) at (5, 1)  {Higher energy prices\\[1pt] {\small\itshape (Tradeoff)}};
+\node[box] (dist)   at (5, -1) {Distributional effects\\[1pt] {\small\itshape (Tradeoff)}};
+
+% Column 3: y
+\node[xybox] (y) at (10, 1) {$y$};
+
+% Arrows: x -> effects
+\draw (x) to[bend left=25]  (health.west);
+\draw (x) --                (prices.west);
+\draw (x) to[bend right=25] (dist.west);
+
+% Arrows: effects -> y
+\draw (health.east) to[bend left=25]  (y);
+\draw (prices.east) --                (y);
+\draw (dist.east)   to[bend right=25] (y);
+
+\end{tikzpicture}
+\label{fig:dag}
+\end{figure}
+\end{center}
+However, there are many other interpretations of the receiver and her preferences.
+If $R$ is an investor, she cares about how much money she can make by investing in a choice $x$.
+If $R$ is a CEO restructuring her firm via layoffs, she cares about her decision's impact on profits.
+If $R$ is a voter, she cares about the impact of a policy $x$ on her wellbeing.
+We utilize these simple preferences for higher $y$ in the baseline model, but section \ref{section:forecast} extends them to evaluate settings where $R$ also values \emph{forecast accuracy}, and thus knowing the correct model of the world.
+
+
+\subsection{Sender and Data}
+The receiver $R$ contracts a sender $S$ to provide her with information about the true data-generating process.
+This sender should be thought of as a \emph{consultant} or \emph{contractor} who provides domain expertise and access to data.
+Of particular interest is also the case where $S$ is an AI-program, such as a large-language-model (LLM) that $R$ can interface with.
+
+The sender may consider different models than the receiver, which is determined by a private type.
+The order of events is as follows.
+\begin{enumerate}
+\item Nature draws $S$'s type and the receiver's true model $f_R$.
+\item $S$ collects data.
+\item $S$ provides a model to $R$ that fits the data he collected. $R$ updates her beliefs about the true data-generating process based on her beliefs about $S$'s type and the model.
+\item $R$ makes a decision $x^*$. $S$ receives utility. Uncertainty resolves, and $R$ receives her utility. 
+\end{enumerate}
+We now provide more detail about each of these components.
+
+\paragraph{Sender's Type}
+A sender's type affects the set of models --- and hence information --- he is capable of providing to $R$.  
+The key is that $S$ is limited in how he can model the non-affine component of $f_R$, relative to how $R$ thinks about the problem.
+
+The sender's type space is given by $\Theta \subseteq \mathcal{P}(\Gamma)$, and is composed of subsets of $\Gamma = [0,\overline{\gamma}]$.
+We impose the restriction that each $\theta \in \Theta$ is a closed interval.
+A type $\theta$ sender is able to provide $R$ a model in the set $F_{\theta}$, where
+\begin{align*}
+F_{\theta} := \{f_\theta \in F_R : f_\theta = \beta_0+\beta_1x - \delta x^2, \delta \in \theta, (\beta_0,\beta_1) \in \mathbb{R}^2 \}.	
+\end{align*}
+Intuitively, $\theta$ represents the \emph{degree} to which a sender can model \emph{tradeoffs}.
+The sender's type is drawn from a distribution $T_\theta$ over $\Theta$, which is known to $R$.
+
+To start, we assume there are two sender types.
+We make this assumption to highlight the key features of the model, but introduce a richer sender type space later on.
+\begin{assumption}
+$\Theta = \{\theta_1,\theta_2\}$ with $\theta_1 = \{0\}$.
+and $\theta_2 = \{\overline{\gamma}\}$.
+\label{asstwotype}	
+\end{assumption}
+The two sender types in Assumption \ref{asstwotype} have the following interpretation.
+The type $\theta_1$ sender estimates a model $y = \beta_0+\beta_1x$, without allowing for any nonlinear effects of $x$.
+In this sense, the sender \textbf{neglects tradeoffs} and estimates a \textbf{optimistic model}: he  runs a linear regression of $y$ on $x$ instead of considering a nonlinear relationship.
+In our example, the economist may believe small carbon taxes generate meaningful reductions in pollution without adverse effects, but very high taxes lead to higher energy prices or lower business activity.
+These nonlinear effects would be neglected if a scientist presented a linear regression of welfare on tax rates. 
+
+The type $\theta_2$ sender is the opposite. This sender estimates models of the form $y = \beta_0+\beta_1x-\overline{\gamma}x^2$, where $\overline{\gamma}$ is fixed at its highest possible value.
+We say this sender \textbf{exaggerates tradeoffs} and estimates a \textbf{pessimistic model} of the impact of $x$ on $y$.
+For example, the scientist may always consider the ``worst case scenario'' effect that higher taxes can have on business sector activity, even though the receiver believes that worst case is very unlikely (i.e. $\gamma \leq \overline{\gamma})$.
+We assume a type $\theta$ sender has a prior over $\beta_0$ and $\beta_1$ given by measures $\beta_0 \sim P_0^\theta$ and $\beta_1 \sim P_1^\theta$ with support on $\mathbb{R}$.
+
+
+
+\paragraph{Sender's Data}
+Prior to choosing a model, $S$ chooses a data sampling strategy $\mu_\theta$, where $\mu_\theta$ is a distribution over $X$.
+Intuitively, this means that $S$ is choosing a distribution of choices in $x$ to collect data on. 
+$R$ does not observe $S$'s choice of $\mu_\theta$.
+\begin{assumption}
+$\mu_\theta$ is parametrized by $\mu_\theta(x_\theta,\sigma_\theta) = x_\theta + \sigma_\theta\cdot \epsilon$,
+where $\epsilon$ is mean-zero, symmetric, and $\Var(\epsilon)=1$.
+$x_\theta \in [\underline{x},\overline{x}]$ for $\overline{x}>\underline{x}$ and $\sigma_\theta \in [\underline{\sigma},\overline{\sigma}]$ for $\overline{\sigma}>\underline{\sigma}>0$ and $\underline{\sigma}$ arbitrarily small.
+\label{assdist}
+\end{assumption}
+Assumption \ref{assdist} provides a convenient parametrization of $\mu_\theta$ as a distribution centered around a mean $x_\theta$. $\sigma$ controls the standard deviation of the distribution.
+The constraint that $\sigma>0$ is a normality assumption made to ensure learning is structured in equilibrium.
+$x_\theta$ and $\sigma_\theta$ will denote the equilibrium choices of a type $\theta$ sender.
+
+We introduce two definitions here.
+We say a type $\theta$ sender is a \textbf{generalist} if $\sigma_\theta = \overline{\sigma}$.
+Intuitively, a type $\theta$ sender's model is estimated \emph{distantly} on as wide a range of $x$ values as possible.
+We say a type $\theta$ sender is a \textbf{specialist} if $\sigma_\theta = \underline{\sigma}$.
+That is, this sender estimates a model \emph{locally} on a small set of $x$ values.
+
+In our example, when the scientist is first contracted by the economist, he will first choose whether to position himself as a \emph{generalist} or \emph{specialist}. If he is a generalist, then the data he uses to fit his models is drawn from a wide range of carbon tax rates from many contexts.
+If the scientist is a \emph{specialist}, he will utilize information about a small range of carbon tax rates.
+ 
+Given this sampling strategy, $S$ directly observes the joint distribution of $(y,x)$, subject to observational noise.
+Formally, if the true data-generating-process is $f_R^*$, he observes a joint distribution $D(y,x)$, where the marginal distribution of $x$ is given by $D_x = \mu_\theta$ and the conditional distribution of $y$ given $x$ is given by $D_y(y|x) = f_R^*(x)+\eta$, where
+$\eta$ is a mean-zero noise term with unknown variance.
+This is equivalent to $S$ observing an infinite number of i.i.d. draws from the true data-generating-process.
+
+\paragraph{Sender's Information}
+With the sender's type and sampling strategy, in hand, we define the model $S$ provides to $R$.
+%We say that a model $f_S$ \textbf{fits the data} with respect to $\theta$ and a data-sampling strategy $\mu_\theta$ if:
+%\begin{align*}
+%\mathbb{E}_{\mu_\theta}\big[f_S(x)\big] = \mathbb{E}_{D(\mu_\theta)}\big[y\big].
+%\end{align*}
+%Our key assumption is that $S$ must provide a model $f_S$ that fits the data.
+%Additionally, 
+We say that a model $f_S$ \textbf{best-fits the data} with respect to $\theta$ and a data-sampling strategy $\mu_\theta$ if:
+\begin{align*}
+f_S= \arg\min_{f \in F_\theta} \mathbb{E}_{D(\mu_\theta)}\big[\big(y-f(x)\big)^2\big].
+\end{align*}
+The existence of a best-fitting model is given by the Hilbert Projection Theorem.
+For example, when we have $\theta_1 = \{0\}$, $f_S$ represents the \emph{best-fitting linear model} to the data.
+
+We assume $S$ always provides $R$ the best-fitting model to the data. In our running example, the interpretation is that the scientist makes an honest effort to provide $R$ quality information about tax rates, within the constraints of how he approaches the problem.
+$S$ may use a well-known algorithm to fit his model (such as a linear regression) that can be at least partially verified by the economist (such as through a ``replication package''). 
+This allows us to isolate who model \emph{simplicity} and strategic \emph{data collection} shape learning and sender behavior.
+
+
+\paragraph{Sender's Preferences}
+
+Suppose $S$ provides a model $f_S \in F_\theta$.
+Let $x^*$ be the receiver's choice of $x \in X$ conditional on her posterior beliefs over models $q|f_S$.
+The sender's utility conditional on $f_S$ is given by:
+\begin{align*}
+U_S(x^*) = \mathbb{E}_{q|f_S}[f_R(x^*)]	.
+\end{align*}
+That is, conditional on providing a model $f_S$, $S$ would like to maximize $R$'s expected utility. 
+
+The interpretation of these preferences in our example is that the scientist would like to make the economist \emph{optimistic}.
+He may receive a consulting bonus if the economist is more optimistic about the potential gains she can reap from the carbon tax policy.
+Relatedly, the economist may be more likely to utilize the scientist's services in the future.
+Beyond the current example, however, the preferences lend themselves to several interpretations.
+\begin{itemize}
+	\item  $S$ is a portfolio manager who receives a fixed share of $R$'s expected earnings. Then, he cares about the expected profits $R$ can realize (and thus his payment).
+	\item $S$ is a consulting firm whose services a CEO $R$ contracts. $S$ may care about the expected gain in profits $R$ receives either directly (e.g. because his ``bonus'' is proportional to $R$'s gain in profits) or indirectly (e.g. because his reputation is tied to his ability to realize profits for those who contract his services).
+	\item $S$ is an AI program that wants to maximize its engagement with its user base. The more optimistic users are, the more likely they will be to purchase a premium subscription.
+	\item $S$ is an office-motivated politician who provides information to a median voter $R$. The higher the median voter thinks $y$ is, the more likely she is to turn out. If re-elected, the politician will implement $R$'s preferred policy $x^*$.
+\end{itemize}
+
+
+
+\subsection{Additional Comments}
+
+In our framework, the receiver's learning is affected by two key features: the fact she does not know if the sender is a \emph{generalist} or \emph{specialist}, and the fact that the sender's models may be \emph{simplified}.
+Uncertainty about whether the sender is a generalist or specialist ultimately boils down to uncertainty about the sorts of data and information the sender has access to, which is a key friction that emerges when contracting with models.
+Consider the three examples below.
+\begin{enumerate}
+\item The sender may have access to a proprietary dataset, which cannot be directly disclosed to the receiver. Companies like Nielsen, for instance, provide proprietary data on ``audience segments'' to help advertisers run targeted campaigns \citep{nielsen2024audiencesegments}.
+\item The sender's model may also embed \emph{expertise}. The strategy literature suggests that firms often develop internal ways of approaching a problem based on analogous situations it  has experienced in the past \citep{carroll2024strategy}. Accordingly, a consulting firm's recommendations may be informed by experience working on cases similar to each other (as a ``specialist'') or drawn from many different cases and past contexts (as a ``generalist''). 
+\item The sender is an AI program. It is often difficult for users of these programs (or even their developers) to understand the mapping from internal data to recommendations \citep{zuccarelli2024blackbox}. In this sense, the mapping from the data to a model is a \emph{blackbox}.
+\end{enumerate}
+What matters is that $R$ knows $S$ has access to useful data, but must infer how that data may be strategically sampled when estimating a model.
+Accordingly, we will be interested in exactly \emph{what sorts of data} the sender will collect in equilibrium, and \emph{how} that data collection interacts with the simplicity of his models.
+
+Additionally, $R$ may also be unable (or unwilling) to expend organizational time and resources in collecting, understanding, and synthesizing complex data.
+Instead, she delegates the collection of data and its synthesis into a model to the sender, expediting her decision-making process in the interest of convenience, but potentially at the cost of information quality.
+
+This is related to the second friction, which is that $S$ may simply be unable to think about problems exactly the way $R$ would like.
+With two types, $S$ either estimates an optimistic model that \emph{totally} neglects tradeoffs, or one that totally exaggerates them and assumes a worst-case scenario.
+This assumption can be founded through a few different lenses.
+\begin{enumerate}
+\item \textbf{Lack of sophistication}: the case where $S$ estimates an optimistic model is equivalent to one where $S$ estimates a \emph{linear regression} of $y$ on $x$. The sender may be able to estimate a``line of best fit,'' but not understand more complicated model fitting techniques. Thus, he does one of two things. Either he continues to totally neglect nonlinear tradeoffs (because he cannot estimate them), or overcompensates and assume a worst-case scenario.
+\item \textbf{Calibration}: Instead of estimating all parameters organically on data, $S$ may calibrate some model parameters to a fixed value, such as an elasticity from the literature. We discuss calibration later when we discuss richer type spaces.
+\item \textbf{Strategic Behavior}: the sender may actually be able to make the receiver \emph{more optimistic} if she thinks his model was a simplified model. While we take this assumption as a given, this will be a central result of the paper, and is developed in Section \ref{section:simple}.
+\end{enumerate}
+The case where $S$ provides linear regression models is also of particular interest, given the widespread usage of linear regression models in the business world, economics, and data-driven social sciences.
+We additionally note that while the baseline model assumes a quadratic loss from tradeoffs, Section \label{section:general} shows that the main results are robust to non-quadratic preferences if we impose regularity assumptions.
+
+Finally, we assume that $S$ must provide the best-fitting model to the data, rather than a model that simply ``fits the data.''
+The interpretation is that $S$ makes an honest effort to provide $R$ the best model he can, given the set of data-generating-processes he can model.
+While it could be that $S$'s honesty emerges due to professional norms or unmodeled career concerns, it may also be that $S$ synthesizes data using methods or algorithms that are well-known in his field of expertise.
+Relatedly, $R$ could require $S$'s methodology to be ``replicable.''
+Nevertheless, even though $S$ provides a model of best-fit, he can still manipulate the set of models $R$ entertains through the way he initially samples data as well as his type $\theta$.
+
+For the majority of the analysis, we focus on settings where the nonlinear component of $f_R$ is quadratic. While this is done for tractability, section \ref{section:forecast} discusses the sorts of assumptions necessary to generalize the logic to more general functional forms.
+Most of the results also generalize to multidimensional settings, and many of the proofs are identical, which we discuss in the same section.
+
+\section{Learning from Models}\label{section:learning}
+This section first investigates the model with the two simple sender types provided above, where one sender provides the receiver an optimistic ``linear regression'' model that neglects tradeoffs, and the other a pessimistic ``worst case'' model that exaggerates tradeoffs.
+We characterize the set of models that the receiver entertains in each case.
+Using this insight, we show that senders who neglect tradeoffs position themselves as ``generalists,'' while those who exaggerate them position themselves as ``specialists.'' We show how this result emerges from the combination of senders' model simplicity with their ability to strategically sample data.
+
+We then move towards a more complex sender type space to show how the results generalize when senders may only underestimate or overestimate some tradeoffs while correctly estimating  others.
+Accordingly, the proofs of all results with the two-type senders are treated as special cases of the results with the complex sender type space.
+%We characterize the value of learning for the receiver from contracting different senders.
+%We finish the section by discussing what happens when receivers also value choice accuracy, showing that her choices are more accurate under a sender who is a specialist, relative to a sender who is a generalist.
+
+\subsection{Two Types: Receiver's Learning and Behavior}
+We begin by characterizing receiver learning as a function of data-sampling strategies and $S$'s type.
+\paragraph{Receiver's Updating}
+Suppose $S$ provided a model of the form $f_S(x) = \beta_0+\beta_1 x-\delta x^2$ which best fits the data.
+In our two type example, we have either $\delta = 0$ (when $\theta = \theta_1$) or $\delta = \overline{\gamma}$ (when $\theta = \theta_2$).
+We define $\phi(f_S;\theta,\mu_\theta)$ as the set of functions that could rationalize the data for $R$, given $f_S$ best-fits with respect to $F_S$ and $\mu_\theta$:
+\begin{align*}
+\phi(f_S;\theta,\mu_\theta) = \bigg\{f_R \in F_R : f_S =\arg\min_{f \in F_\theta} \mathbb{E}_{\mu_\theta}\big[\big(f_R(x)-f(x)\big)^2\big] \bigg\}.	
+\end{align*}
+Crucially, the sender may entertain additional beyond $f_S$. $\phi$ describes this set of additional DGPs that $R$ entertains.
+
+We necessarily have that for each $f_R \in \phi(f_S;\theta,\mu_\theta)$:
+\begin{align*}
+\frac{\partial}{\partial \beta_i} \mathbb{E}_{\mu_\theta}\big[\big(f_R(x)-f(x)\big)^2\big] = 0, 
+\end{align*}
+which yields the following moment conditions familiar from ordinary-least-squares (OLS):
+\begin{align}
+&\mathbb{E}_{\mu_\theta}\big[f_R(x)-\beta_0-\beta_1 x + \delta x^2\big] =0
+\label{eq:intercept}
+\\
+&\mathbb{E}_{\mu_\theta}\big[x\big(f_R(x)-\beta_0-\beta_1 x+\delta x^2 \big)\big] =0
+\label{eq:slope}
+\end{align}
+Equation (\ref{eq:intercept}) is the moment condition with respect to the intercept, and states that on average, the difference between $f_R$ and $f_S$ must average to zero.
+We note that this is the same as the constraint that a model must ``fit the data.''
+Equation (\ref{eq:slope}) can be combined with equation  (\ref{eq:intercept}) to read that the covariance between $x$ and $f_R(x)-\beta_0-\beta_1 x - \delta x^2$ is zero.
+Both expectations are taken with respect to $\mu_\theta$, which is $S$'s sampling strategy.
+The following proposition characterizes the set of functions that $R$ entertains given $f_S$, $\theta$, and $\mu_\theta$.
+\begin{restatable}{proposition}{reduction}
+\label{prop:reduction}
+Suppose $f_S = \beta_0+\beta_1x-\delta x^2$ best-fits the data and $\mu_\theta = \mu_\theta(x_\theta,\sigma_\theta)$. Then, for all $f_R \in \phi(f_S;\theta,\mu_\theta)$, we have:
+\begin{align*}
+f_R(x) = f_S(x)+(\gamma-\delta)\big(\sigma^2-(x-x_\theta)^2\big).
+\end{align*}
+\end{restatable}
+The proof of this result is contained in the Appendix, and assumes the more general type space $\Theta$ introduced later in the section.
+
+Consider the economist and scientist. The economist can see that the scientist's model is potentially simpler than she would like.
+Thus, she considers the scientist's original model but also other models that could rationalize the tax-welfare data the scientist saw.
+Mathematically, the set of models that $R$ considers, given a best-fitting model $f_S$, takes a simple form: they are all the sender's original model plus a constant, less a quadratic term centered at $x_\theta$.
+In the case where $\theta_1 = \{0\}$, we have
+\begin{align*}
+f_R(x) = \beta_0+\beta_1x+\gamma\big(\sigma^2-(x-x_\theta)^2\big)	
+\end{align*}
+for each $\gamma \in [0,\overline{\gamma}]$.
+In the case where $\theta_1 = \{\overline{\gamma}\}$, we have
+\begin{align*}
+f_R(x) = \beta_0+\beta_1x-\gamma\big(\sigma^2-(x-x_\theta)^2\big)	
+\end{align*}
+for each $\gamma \in [0,\overline{\gamma}]$.
+In both cases, the set of models $R$ considers involve a fixed ``affine component'' plus a constant and quadratic term, which may be positive or negative.
+Moreover, all plausible $f_R$s have the same slope at $x_\theta$.
+
+
+This intuition is shown for the type $\theta_1$ in the left panel of Figure \ref{fig:phi} below.
+%Here, $\mu_\theta(x_\theta,\sigma_\theta)$ is shown for $\sigma_\theta$ intermediate and $x_\theta = 0.5$.
+The purple line shows the sender's linear regression model.
+The orange dotted lines indicate all the potentially alternative models $f_R$ that the receiver entertains.
+When $S$ estimates a linear regression model, she neglects any tradeoffs $R$ thinks are important, and thus estimates a rosier model than reality.
+Accordingly, all the additional models that $S$ entertains have a steeper curvature than the regression model, precisely because the linear regression neglects tradeoffs.
+However, across the sampling range, they have the same sample mean and average slope.
+\begin{figure}[H]
+    \caption{Plausible receiver models $f_R$ as function of sender model $f_S$ and sampling strategy $\mu_\theta(x_\theta,\sigma_\theta)$}
+\begin{subfigure}[t]{0.49\textwidth}
+    \begin{tikzpicture}
+    \begin{axis}[width=\textwidth,
+        xmin=0, xmax=1.0,
+        ymin=0.3, ymax=0.9,
+        axis on top=true,
+        xlabel={Choice $x$},
+        ylabel={Outcome $y$},
+        ylabel near ticks,
+        yticklabels={,},
+        xtick={0,1},
+        xticklabels={0,1},
+        extra x ticks={0.5},
+        extra x tick labels={$x_\theta$},
+        ]
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x+0.5*(0.05-(x-0.5)^2)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x+1*(0.05-(x-0.5)^2)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x+2*(0.05-(x-0.5)^2)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x+3*(0.05-(x-0.5)^2)};
+        \addplot [mark=none, draw=Violet, domain=0:1, samples=100, ultra thick] {0.3+0.6*x};
+        \addplot [mark=none,draw=black,dashed,domain=0:1] coordinates {(0.5,0) (0.5,1)};
+	\node at (axis cs:0.12,0.6) {\footnotesize$f_S$};
+	\draw[-] (axis cs:0.125,0.56) -- (axis cs:0.14,0.4);
+	\node at (axis cs:0.75,0.4) {\footnotesize Plausible $f_R$s};
+	\draw[-] (axis cs:0.75,0.42) -- (axis cs:0.85,0.55);
+
+    \end{axis}
+    \end{tikzpicture}
+    \caption{Plausible models when sender provides optimistic ``linear'' model}
+    \end{subfigure}
+\hspace{0cm}
+\begin{subfigure}[t]{0.49\textwidth}
+    \begin{tikzpicture}
+    \begin{axis}[width=\textwidth,
+        xmin=0, xmax=1.0,
+        ymin=-0.2, ymax=0.8,
+        axis on top=true,
+        xlabel={Choice $x$},
+        ylabel near ticks,
+        yticklabels={,},
+        xtick={0,1},
+        xticklabels={0,1},
+        extra x ticks={0.5},
+        extra x tick labels={$x_\theta$},
+        ]
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.2+0.4*x};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.2+0.4*x+0.5*(0.05-(x-0.5)^2)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.2+0.4*x+1*(0.05-(x-0.5)^2)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.2+0.4*x+2*(0.05-(x-0.5)^2)};
+        \addplot [mark=none, draw=Violet, domain=0:1, samples=100, ultra thick] {0.2+0.4*x+3*(0.05-(x-0.5)^2)};
+	\node at (axis cs:0.4,0.7) {\footnotesize$f_S$};
+	\draw[-] (axis cs:0.4,0.66) -- (axis cs:0.4,0.5);
+	\node at (axis cs:0.6,0.2) {\footnotesize Plausible $f_R$s};
+	\draw[-] (axis cs:0.6,0.25) -- (axis cs:0.6,0.42);
+
+    \end{axis}
+    \end{tikzpicture}
+    \caption{Plausible models when sender provides pessimistic ``worst case'' model}
+    \end{subfigure}
+    \label{fig:phi}
+\end{figure}
+
+The right panel shows the intuition for type $\theta_2 = \{\overline{\gamma}\}$, who estimates a pessimistic model that exaggerates tradeoffs.
+Here, all the additional models that $R$ entertains have shallower curvature than $f_S$.
+Just like the case with the linear regression, however, they all have the same average slope and sample mean with respect to $\mu_\theta(x_\theta,\sigma_\theta)$. 
+
+
+%Mathematically, the proof utilizes a result known as ``Stein's Lemma'' that the derivative of $f_R$ and $f_S$ must be the same ``on average'' over $\mu_\theta$ under certain regularity assumptions.
+%As $\sigma \to 0$, for each $f_R \in \phi(f_S;\theta,\mu_\theta)$, the derivative of $f_R$ and $f_S$ converges at the point $x_\theta$.
+%Using (\ref{eq:intercept}), we also have that as $\sigma \to 0$, the value of each $f_R$ and $f_S$ must converge at $f_S$.
+%Thus, all $f_R \in \phi(f_S;\theta,\mu_\theta)$ are (approximately) tangent to $f_S$ at $x_\theta$.
+
+%
+%
+%The set of feasible models is different for $\sigma > 0$. In particular, if $\sigma'>\sigma$, then the distribution $\mu_\theta(x_\theta,\sigma')$ is a mean-preserving spread of $\mu_\theta(x_\theta,\sigma_\theta)$.
+%Since $f_R$ and $f_S$ are both quadratic, their derivatives are linear, meaning (\ref{eq:slope}) is invariant to mean preserving spreads (and thus does not depend on $\sigma$).
+%Thus, each plausible $f_R$ at $\sigma$ is also plausible at $\sigma'$ and vice-versa, up to a constant.
+%The value of this constant depends on the curvature of $f_R$ relative to $f_S$.
+%Because each $f_R$ is concave, its expectation over $\mu_\theta(x_\theta,\sigma_\theta)$ is decreasing in $\sigma$.
+%If a given $f_R$ is ``more concave'' than $f_S$ --- i.e. if $\gamma > \delta$, this $f_R$ must shift up by a constant relative to $f_S$.
+%If a given $f_R$ is ``less concave'' than $f_S$ --- i.e. if $\gamma < \delta$, $f_R$ must shift down by a constant relative to $f_S$.
+%This is shown in the right panel of Figure \ref{fig:phi}. For higher $\sigma$, the plausible $f_R$s that are ``more linear'' lie below $f_S$ in the sampling range.
+%The $f_R$s that are ``more concave'' lie above $f_S$.
+
+\paragraph{Receiver's Decisionmaking}
+The receiver's learning takes a relatively simple form: regardless of the limitation on $S$'s ability, $R$ always learns what the data-generating-process looks like ``up to the first derivative.'' 
+Moreover, as $\sigma$ changes --- and thus $S$'s sampling strategy changes --- the set of plausible $f_R$s remains identical, except that they shift up or down by a constant.
+This means that $R$'s optimal \emph{action} depends only her expectation of $\gamma$ (given $\delta$ and $\theta$).
+Given $f_S$, the expected value of the problem also has a simple expression.
+
+\begin{corollary}
+$R$'s optimal action is given by:
+\begin{align*}
+x^*	= x_\theta + \frac{\beta_1-2\delta x_\theta}{2\mathbb{E}_\gamma^R[\gamma]}.
+\end{align*}
+%$R$'s expected value from this action is given by
+%\begin{align*}
+%y^* = \beta_0+	\beta_1 x_\theta -\delta x_\theta^2 + \frac{(\beta_1-2\delta x_\theta)^2}{4\mathbb{E}_\gamma^R[\gamma|\theta,\delta]}+\big(\mathbb{E}_\gamma^R[\gamma|\theta,\delta]-\delta\big)\sigma^2.
+%\end{align*}
+%\begin{align*}
+%x^*	= x_\theta + \frac{\beta_1-2\delta x_\theta}{2\mathbb{E}_\gamma^R[\gamma|\theta,\delta]}.
+%\end{align*}
+%$R$'s expected value from this action is given by
+%\begin{align*}
+%y^* = \beta_0+	\beta_1 x_\theta -\delta x_\theta^2 + \frac{(\beta_1-2\delta x_\theta)^2}{4\mathbb{E}_\gamma^R[\gamma|\theta,\delta]}+\big(\mathbb{E}_\gamma^R[\gamma|\theta,\delta]-\delta\big)\sigma^2.
+%\end{align*}
+\end{corollary}
+%The value of $\mathbb{E}_\gamma^R[\gamma|\theta,\delta]$ is also relatively simple.
+%\begin{itemize}
+%\item If (\ref{eq:gamma}) is equal to $0$ at $\delta$, then $\mathbb{E}_\gamma^R[\gamma|\theta,\delta] = \delta$.
+%\item If (\ref{eq:gamma}) is $\leq 0$, then it must be that $\delta = \overline{\delta}_\theta$, and $\mathbb{E}_\gamma^R[\gamma|\theta,\delta] = \mathbb{E}[\gamma|\gamma \geq \delta]$.
+%\item Likewise, if (\ref{eq:gamma}) is $\geq 0$, then it must be that $\delta = \underline{\delta}$, and $\mathbb{E}_\gamma^R[\gamma|\theta,\delta] = \mathbb{E}_\gamma^R[\gamma|\gamma \leq \delta]$.
+%\end{itemize}
+
+
+
+\subsection{Two Types: Sender's Data Sampling and Model Provision}
+We use these insights to show how $S$ chooses a sampling strategy (i.e. $x_\theta$ and $\sigma_\theta$) as a function of her type.
+%We will use the following terminology to distinguish different types of sampling.
+%\begin{itemize}
+%\item \textbf{Local sampling}: $\sigma = \underline{\sigma}$. In this case, $\mu_\theta$ samples $x$ values in a small neighborhood of $x_\theta$, i.e. is collecting information ``locally relevant'' to $x_\theta$.
+%\item \textbf{Distant sampling}: $\sigma = \overline{\sigma}$. In this case, $\mu_\theta$ samples $x$ values from as wide a range as possible $x_\theta$.
+%\end{itemize}
+
+
+
+
+\begin{restatable}{proposition}{prop:sampling}
+Fix $x_\theta$.
+The type $\theta_1$ sender who estimates an optimistic model positions himself as a generalist.
+The type $\theta_2$ sender who estimates a pessimistic model positions himself as a specialist.
+%In particular:
+%\begin{itemize}
+%\item $\sigma_1 = \overline{\sigma}$ and $x_1 = \max\{\underline{x},\min\big\{\frac{\mathbb{E}_{\beta_1}^\theta[\beta_1]}{2\mathbb{E}_\gamma^\theta[\gamma]},\overline{x}\big\}\big\}$; 
+%\item $\sigma_2 = \underline{\sigma}$ and $x_2 = \underline{x}$ or $\overline{x}$. 
+%\end{itemize}
+\label{prop:sampling}
+\end{restatable}
+The proof of the result is a special case of Theorem \ref{thm:sampling}, which is the version of the result for the more general type space.
+
+Proposition \ref{prop:sampling} can be interpreted as follows.
+If the sender estimates an optimistic model, the receiver will consider models with $\gamma \geq 0$, i.e. that are \emph{steeper} than the original model.
+This creates an incentive for him to position himself as a \emph{generalist}, i.e. to estimate his model on as wide a set of choices as possible.
+However, if the sender estimates a pessimistic model, the receiver will consider models with $\gamma \leq \overline{\gamma}$, i.e. that are \emph{flatter} than the original model.
+This gives $S$ an incentive to position himself as a specialist who estimates the DGP locally in a neighborhood of $x_\theta$.
+
+The intuition is driven by the interaction of the \emph{steepness} and curvature of the receiver's additional models with the sender's method of \emph{data sampling}, and is 
+shown visually in Figure \ref{fig:samplingintuition} below. 
+The left panels (a) and (c) look at the case where $f_S$ is an optimistic model, and is in particularly a linear regression of $y$ on $x$.
+The right panels (b) and (d) look at the case where $f_S$ is the worst-case model fitting the data.
+
+Panels (a) and (b) show the case where $S$ has positioned himself as a \emph{specialist}, and samples data locally in a neighorhood of $x_\theta$.
+In both cases, all the additional plausible models $f_R$ are tangent to $f_S$ at $x_\theta$.
+In panel (a), all these alternative models are `steeper'' than $f_S$, and lie below $f_S$ at the point of tangency.
+However, in panel (b), because the alternative models that $R$ considers are ``shallower'' than $f_S$, these alternatives all lie above $f_S$.
+
+
+This logic flips when looking at panels (c) and (d), where $S$ has positioned himself as a generalist.
+Recall that the distribution of $x$ values when $\sigma = \overline{\sigma}$ is a mean-preserving-spread of that when $\sigma=\underline{\sigma}$.
+To rationalize the data, functions with higher $\gamma$ values that are ``more concave'' must shift up relative to shallower ones.
+In panel (c), this means that the shallower $f_R$ models now lie \emph{below} $f_S$.
+In panel (d), the steeper $f_R$ models now lie \emph{above} $f_S$.
+
+\begin{figure}[H]
+\centering
+    \caption{Models that $R$ entertains when $S$ is a specialist vs. generalist, optimistic vs. pessimistic models}
+    \label{fig:samplingintuition}
+{(i) $S$ is a specialist}\\[2mm]
+\begin{subfigure}[t]{0.49\textwidth}
+    \begin{tikzpicture}
+    \begin{axis}[width=\textwidth,
+        xmin=0, xmax=1.0,
+        ymin=0, ymax=0.8,
+        axis on top=true,
+        xlabel={Choice $x$},
+        ylabel={Outcome $y$},
+        ylabel near ticks,
+        yticklabels={, ,},
+        xtick={0,1},
+        xticklabels={0,1},
+        extra x ticks={0.5},
+        extra x tick labels={$x_\theta$},
+        ]
+        \addplot [mark=none, draw=Violet, domain=0:1, samples=100, ultra thick]  {0.1+0.6*x};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.1+0.6*x+(0.5-0)*(0-(x-0.5)^2)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.1+0.6*x+(1-0)*(0-(x-0.5)^2)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.1+0.6*x+(1.5-0)*(0-(x-0.5)^2)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]{0.1+0.6*x+(2-0)*(0-(x-0.5)^2)};
+        \addplot [mark=none,draw=black,dashed,domain=0:1] coordinates {(0.5,0) (0.5,1)};
+	\node at (axis cs:0.25,0.52) {\footnotesize Optimistic model $f_S$};
+	\draw[-] (axis cs:0.25,0.49) -- (axis cs:0.25,0.28);
+	\node at (axis cs:0.75,0.15) {\footnotesize Alternative $f_R$s};
+	\draw[-] (axis cs:0.75,0.18) -- (axis cs:0.75,0.4);
+    \end{axis}
+    \end{tikzpicture}
+    \caption{$S$ presents optimistic ``linear'' model}
+    \end{subfigure}
+\hspace{0cm}
+\begin{subfigure}[t]{0.49\textwidth}
+    \begin{tikzpicture}
+    \begin{axis}[width=\textwidth,
+        xmin=0, xmax=1.0,
+        ymin=0, ymax=0.8,
+        axis on top=true,
+        xlabel={Choice $x$},
+        ylabel near ticks,
+        yticklabels={,},
+        xtick={0,1},
+        xticklabels={0,1},
+        extra x ticks={0.5},
+        extra x tick labels={$x_\theta$},
+        ]
+        \addplot [mark=none, draw=Violet, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-2*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-1.5*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-1*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.25+0.6*x-0.5*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]{0.25+0.6*x};
+	\node at (axis cs:0.25,0.66) {\footnotesize Alternative $f_R$s};
+	\draw[-] (axis cs:0.25,0.62) -- (axis cs:0.25,0.42);
+	\node at (axis cs:0.75,0.3) {\footnotesize Pessimistic model $f_S$};
+	\draw[-] (axis cs:0.75,0.33) -- (axis cs:0.75,0.55);
+        \addplot [mark=none,draw=black,dashed,domain=0:1] coordinates {(0.5,0) (0.5,1)};
+    \end{axis}
+    \end{tikzpicture}
+    \caption{$S$ presents pessimistic model}
+    \end{subfigure}
+    \\[4mm]
+{(ii) $S$ is a generalist}\\[2mm]
+ \begin{subfigure}[t]{0.49\textwidth}
+    \begin{tikzpicture}
+    \begin{axis}[width=\textwidth,
+        xmin=0, xmax=1.0,
+        ymin=0, ymax=0.8,
+        axis on top=true,
+        xlabel={Choice $x$},
+        ylabel={Outcome $y$},
+        ylabel near ticks,
+        yticklabels={, ,},
+        xtick={0,1},
+        xticklabels={0,1},
+        extra x ticks={0.5},
+        extra x tick labels={$x_\theta$},
+        ]
+        \addplot [mark=none, draw=Violet, domain=0:1, samples=100, ultra thick]  {0.1+0.6*x};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.1+0.6*x+(0.5-0)*(0.15-(x-0.5)^2)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.1+0.6*x+(1-0)*(0.15-(x-0.5)^2)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.1+0.6*x+(1.5-0)*(0.15-(x-0.5)^2)};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]{0.1+0.6*x+(2-0)*(0.15-(x-0.5)^2)};
+        \addplot [mark=none,draw=black,dashed,domain=0:1] coordinates {(0.5,0) (0.5,1)};
+	\node at (axis cs:0.25,0.7) {\footnotesize Alternative $f_R$s};
+	\draw[-] (axis cs:0.25,0.66) -- (axis cs:0.25,0.46);
+	\node at (axis cs:0.75,0.3) {\footnotesize Optimistic model $f_S$};
+	\draw[-] (axis cs:0.75,0.33) -- (axis cs:0.75,0.53);
+    \end{axis}
+    \end{tikzpicture}
+    \caption{$S$ presents optimistic ``linear'' model}
+    \end{subfigure}
+\hspace{0cm}
+\begin{subfigure}[t]{0.49\textwidth}
+    \begin{tikzpicture}
+    \begin{axis}[width=\textwidth,
+        xmin=0, xmax=1.0,
+        ymin=0, ymax=0.8,
+        axis on top=true,
+        xlabel={Choice $x$},
+        ylabel near ticks,
+        yticklabels={,},
+        xtick={0,1},
+        xticklabels={0,1},
+        extra x ticks={0.5},
+        extra x tick labels={$x_\theta$},
+        ]
+        \addplot [mark=none, draw=Violet, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-2*(x-0.5)^2};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-1.5*(x-0.5)^2-(2-1.5)*0.1};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]  {0.25+0.6*x-1*(x-0.5)^2-(2-1)*0.1};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.25+0.6*x-0.5*(x-0.5)^2-(2-0.5)*0.1};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick]{0.25+0.6*x-(2-0)*0.1};
+	\node at (axis cs:0.25,0.6) {\footnotesize Pessimistic model $f_S$};
+	\draw[-] (axis cs:0.25,0.58) -- (axis cs:0.25,0.3);
+	\node at (axis cs:0.75,0.25) {\footnotesize Alternative $f_R$s};
+	\draw[-] (axis cs:0.75,0.28) -- (axis cs:0.75,0.48);
+        \addplot [mark=none,draw=black,dashed,domain=0:1] coordinates {(0.5,0) (0.5,1)};
+    \end{axis}
+    \end{tikzpicture}
+    \caption{$S$ presents pessimistic model}
+    \end{subfigure}  
+\end{figure}
+The higher the alternative $f_R$s are above $f_S$, the more optimistic $R$ is about her prospects.
+Thus:
+\begin{itemize}
+\item When $S$ presents optimistic models, he gains the most by positioning himself as a \emph{generalist}.
+\item When $S$ presents pessimistic models, he gains the most by positioning himself as a \emph{specialist}.
+\end{itemize}
+We defer the sender's choice of $x_\theta$ to the main statement of the result in Theorem \ref{thm:sampling}.
+
+Finally, we note that in our simple type space, the type $\theta_1$ sender has the unique feature that he fits a \emph{linear regression model} to the data.
+Our result on strategic sampling says that this sender always estimates models using data sampled from all across the choice space.
+However, regressions are most effective when thought of as \emph{local linear approximations}.
+Thus, the result on sampling contrasts a sender's persuasive desire to fit a regression to ``distantly sampled data'' and the common perception that regressions are most effective when utilized as ``local'' linear approximations.
+
+%\begin{figure}[H]
+%\centering
+%\begin{tikzpicture}
+%    \begin{axis}[width=0.49\textwidth,
+%        xmin=0, xmax=1.0,
+%        ymin=0, ymax=1.0,
+%        axis on top=true,
+%        xlabel={Choice $x$},
+%        ylabel near ticks,
+%        yticklabels={,},
+%        xtick={0,1},
+%        xticklabels={0,1},
+%        extra x ticks={0.5},
+%        extra x tick labels={$x_\theta$},
+%        ]
+%        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x-0.1*(x-0.5)^2-(0.7-0.1)*0.25};
+%        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x-0.3*(x-0.5)^2-(0.7-0.3)*0.25};
+%        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x-0.7*(x-0.5)^2-(0.7-0.7)*0.25};
+%        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x-1.2*(x-0.5)^2-(0.7-1.2)*0.25};
+%        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x-2*(x-0.5)^2-(0.7-2)*0.25};
+%        \addplot [mark=none, draw=Violet, domain=0:1, samples=100, ultra thick] {0.3+0.6*x-(0.7)*0.25};
+%        \addplot [mark=none,draw=black,dashed,domain=0:1] coordinates {(0.5,0) (0.5,1)};
+%	\node at (axis cs:0.2,0.9) {\footnotesize Plausible $f_R$s};
+%	\node at (axis cs:0.8,0.4) {\footnotesize$f_S$};
+%	\draw[-] (axis cs:0.8,0.45) -- (axis cs:0.8,0.58);
+%
+%    \end{axis}
+%    \end{tikzpicture}
+%    \caption{Plausible receiver models $f_R$ when $f_S$ is a linear regression}
+%    \label{fig:regression}
+%\end{figure}
+
+\subsection{Model with More than Two Types}
+We now move to generalize the results from the previous section by considering a richer sender type space.
+In the model with two types, senders either always assumed an optimistic linear model that completely neglected all tradeoffs, or a pessimistic worst-case model that exaggerated all of them.
+In reality, senders and receivers alike may consider multiple tradeoffs in different ways.
+\begin{itemize}
+\item Senders could estimate \emph{some} tradeoffs and assume the worst-case or neglect others. For example, the scientist may thoroughly estimate how carbon taxes affect energy prices, but assume a worst-case scenario for its effects on political backlash. 
+\item Senders could \emph{calibrate} the value of a tradeoff at a fixed parameter, without estimating it on the real data. For example, the scientist may calibrate the effect of carbon taxes on energy prices using an elasticity from the literature, rather than organically estimating it on data.
+\end{itemize}
+Accordingly, we now place the following structure on type spaces.
+\begin{assumption}
+For each $\theta \in \Theta$, $\theta \subseteq \Gamma$ is a (potentially degenerate) closed interval. 
+For each $\theta \neq \theta' \in \Theta$, $\theta \cap \theta' = \emptyset$.
+\label{asstype}
+\end{assumption}
+Assumption \ref{asstype} states that each type corresponds to an interval within $[0,\overline{\gamma}]$. 
+We assume type intervals do not intersect for expositional purposes.
+The case where they do is of particular interest, and we study it in section \ref{section:simple}.
+
+We will denote $\theta = [\underline{\delta}_\theta,\overline{\delta}_\theta]$.
+Accordingly, type spaces have the following interpretations.
+\begin{itemize}
+\item If $\overline{\delta}_\theta < \overline{\gamma}$, then a type $\theta$ $S$ is \emph{neglecting at least some tradeoffs}. Intuitively, these senders do not allow for the case where $\gamma$ is close to $\overline{\gamma}$.
+\item If $\underline{\delta}_\theta > 0$, then a type $\theta$ $S$ is \emph{exaggerating at least some tradeoffs}. These senders do not allow for the case where $\gamma$ is close to $0$.
+\end{itemize}
+Finally, if $\theta = \{\delta\}$ (i.e. $\theta$ is a degenerate interval), then a type $\theta$ sender \textbf{calibrates} his model to a fixed parameter.
+Intuitively, he assumes $\gamma$ has a fixed, predetermined value, and does not actually estimate it using his data.
+
+In addition to priors over $\beta_0$ and $\beta_1$, a type $\theta$ sender now has a prior over $\delta$ given by $\delta \sim P_\delta^\theta$ with support on $\theta \subseteq \Gamma$.
+We make the following assumptions on $P_\delta^\theta$.
+\begin{assumption}
+Let $\partial \theta$ denote the boundary of $\theta \subsetneq [0,\overline{\gamma}]$. Then, $P_\delta^\theta(\partial \theta)>0$.
+%Suppose $\theta = [\underline{\delta}_\theta,\overline{\delta}_\theta]$ is non-degenerate and $\theta \subsetneq \Gamma$.
+%Consider the following two conditions:
+%\begin{align}
+%P_\delta^\theta(\{\underline{\delta}_\theta\})>0
+%\tag{$P_\delta$-1}
+%\\
+%P_\delta^\theta(\{\overline{\delta}_\theta\})>0
+%\tag{$P_\delta$-2}
+%\end{align}
+%If $\theta  \ni \overline{\gamma}$, then ($P_\delta$-1) must hold.
+%If $\theta \ni 0$, then ($P_\delta$-2) must hold.
+%Otherwise, either one of ($P_\delta$-1) or ($P_\delta$-2) must hold.
+\label{assboundary}	
+\end{assumption}
+We impose Assumption \ref{assboundary} as a regularity condition; it is consistent with either $P_\delta$ being a discrete distribution, or $P_\delta$ being a continuous CDF over  $[0,\overline{\gamma}]$ whose mass is artificially truncated. At a mathematical level, a type $\theta$ $S$'s sampling decision will be determined by how he considers tradeoffs on the ``edge'' of the interval $\theta$. This ``edge'' must occur with non-measure-zero probability to have an effect on $S$'s expected utility.
+
+\paragraph{Learning with Interval Types}
+The characterization of $\phi(f_S;\theta,\mu_\theta)$ --- the set of models $R$ considers in addition to $f_S$ --- is the same as above.
+However, we note that if $\theta$ is non-degenerate, we may also have a moment condition corresponding to $\delta$:
+\begin{align}
+&\mathbb{E}_{\mu_\theta}\big[x^2\big(f_R(x)-\beta_0-\beta_1 x+\delta x^2 \big)\big]
+\label{eq:gamma}
+\end{align}
+This equation may be zero or nonzero, depending on $S$'s type.
+We also introduce the following notation
+\begin{align*}
+\overline{\gamma}_\theta = \mathbb{E}_\gamma^R[\gamma | \gamma \geq \overline{\delta}_\theta]
+\\
+\underline{\gamma}_\theta = \mathbb{E}_\gamma^R[\gamma | \gamma \leq \underline{\delta}_\theta]
+\end{align*}
+These represent $R$'s expectation of $\gamma$, given $\gamma$ potentially takes values that $S$ cannot model.
+
+The statement of Proposition \ref{prop:reduction} is identical in the case with interval types, and we note that the formal proof utilizes interval types.
+However, we also state the following corollary.
+\begin{corollary}
+Consider a sender model $f_S = \beta_0+\beta_1x-\delta x^2$ that comes from a type $\theta$ sender. Then, the receiver's expected utility given $x$ is given as follows.
+\begin{itemize}
+\item If $\delta \in \theta^\circ \neq \emptyset$, then
+$\mathbb{E}_{f_R|f_S^\theta}[y|x]
+= f_S(x)$.
+\item If $\delta = \overline{\delta}_\theta < \overline{\gamma}$ and $\theta^\circ \neq \emptyset$, then $\mathbb{E}_{f_R|f_S^\theta}[y|x]
+= f_S(x) + (\overline{\gamma}_\theta-\overline{\delta}_\theta)\big(\sigma^2-(x-x_\theta)^2\big)$.
+\item If $\delta = \underline{\delta}_\theta > 0$ and $\theta^\circ \neq \emptyset$, then $\mathbb{E}_{f_R|f_S^\theta}[y|x]
+= f_S(x) + (\underline{\gamma}_\theta-\underline{\delta}_\theta)\big(\sigma^2-(x-x_\theta)^2\big)$.
+\item If $\theta = \{\delta\}$, then $\mathbb{E}_{f_R|f_S^\theta}[y|x]
+= f_S(x) + (\mathbb{E}_R[\gamma]-\delta)\big(\sigma^2-(x-x_\theta)^2\big)$.
+\end{itemize}
+\end{corollary}
+This generalizes the intuitions in the two-type model. If $\delta = \theta^\circ$, then the moment condition (\ref{eq:gamma}) with respect to $\delta$ is necessarily $0$, and $S$ has provided $R$ the true model.
+If $\delta = \overline{\delta}_\theta$, then $R$ considers models that are ``steeper'' than the one $S$ has provided because he has neglected some tradeoffs.
+If $\delta = \underline{\delta}_\theta$, then $R$ considers models that are ``shallower'' than the one $S$ has provided because he has exaggerated some tradeoffs.
+In the special case where $\theta$ is a singleton, then $R$ is completely uncertain as to the value of $\gamma$. 
+
+\paragraph{Strategic Sampling with Interval Types}
+We now formalize the following definitions.
+We say a type $\theta$ sender estimates an \textbf{optimistic (pessimistic) model} if either:
+\begin{itemize}
+\item $\theta^\circ \neq \emptyset$ and $P_{\gamma}^\theta(\{\overline{\delta}_\theta\})(\overline{\gamma}_\theta-\overline{\delta}_\theta)
+> (<)
+P_{\gamma}^\theta(\{\underline{\delta}_\theta\})(\underline{\delta}_\theta-\underline{\gamma}_\theta)$; 	
+\item or $\theta = \{\delta\}$ and $\mathbb{E}_\gamma^R[\gamma] < (>) \delta$.
+\end{itemize}
+This definition generalizes the logic with two types.
+A sender who presents the optimistic model is like the 
+Concretely, if a sender estimates an optimistic model on average, he tends to \emph{neglect} tradeoffs, i.e. overestimate $\gamma$ relative to the receiver's prior expectation.
+If he estimates a pessimistic model, he tends to \ emph {exaggerate} tradeoffs, i.e. overestimate $\gamma$ relative to the receiver's prior expectation.
+
+This allows us to state our main result on strategic sender sampling, which generalizes the logic of Proposition \ref{prop:sampling}.
+\begin{restatable}{theorem}{sampling}
+If $S$ estimates optimistic models, he positions himself as a generalist $(\sigma_\theta = \overline{\sigma})$
+and sets $x_\theta = \max\{\underline{x},\min\big\{\frac{\mathbb{E}_{\beta_1}^\theta[\beta_1]}{2\mathbb{E}_\gamma^\theta[\gamma]},\overline{x}\big\}\big\}$.
+If $S$ estimates pessimistic models, he positions himself as a specialist $(\sigma_\theta = \underline{\sigma})$ and sets $x_\theta = \underline{x}$ or $\overline{x}$.
+\label{thm:sampling}
+\end{restatable}
+Theorem \ref{thm:sampling} can be interpreted as follows.
+If $\delta \in (\underline{\delta}_\theta,\overline{\delta}_\theta)$, then $R$ believes $S$'s models is correct.
+However, if $\delta = \overline{\delta}_\theta$, $R$ will consider models with $\gamma \geq \overline{\delta}_\theta$.
+Thus, as in the two type case, this creates an incentive for him to sample from all across the choice space.
+
+When $\delta = \underline{\delta}_\theta$, the opposite happens: $R$ considers models with $\gamma \leq \underline{\delta}_\theta$, i.e. ``flatter'' than those that $S$ provided.
+Similarly to the two type case, this gives him an incentive to only estimate models in a small neighborhood of $x_\theta$, i.e. to position himself as a ``specialist.''
+
+Theorem \ref{thm:sampling} additionally tells us what value $x_\theta$ a sender will choose.
+The intuition is as follows.
+When presenting an optimistic model, $S$ would like to ensure all the additional models that $R$ entertains are as far above $f_S^\theta$ as possible.
+This gap is largest when $x_\theta$ is at the maximum of $f_S^\theta$, i.e. where $f_S^{\theta'}(x_\theta) = 0$.
+Because $S$ does not know ex-ante where this maximum will be, he thus samples where he \emph{expects} $f_S^\theta$ to be the shallowest.
+
+When $S$ estimates a pessmistic model, the logic is the opposite.
+If $f_S^\theta$ is maximized at a point $x$, so are all other models tangent to $f_S^\theta$.
+However, if all these other models are tangent at a point farther from $x$, the set of tangent models grow higher and higher above $f_S^\theta$. Thus, he samples at either $\underline{x}$ or $\overline{x}$, where the set of models $S$ obtains are likely to be the steepest.
+
+\subsection{Receiver's Value of Information}
+What would the receiver's willingness to pay be to hire a sender, prior to data sampling and model provision?
+In the absence of the sender, $R$ would solely rely on her prior to choose $x^*$.
+This allows us to characterize the \emph{value of information} for the sender as follows.
+\begin{restatable}{proposition}{valueinfo}
+The value of information for the receiver is given by 
+\begin{align*}
+V^I(T,\Theta) = \frac{1}{4}\bigg(\int_\Theta 
+\mathbb{E}_{\alpha_1,\gamma}^R\big[\alpha_1^2 q(\gamma,\theta)\big] dT(\theta)
+-\frac{\mathbb{E}_{\alpha_1,\gamma}^R[\alpha_1]^2}{\mathbb{E}_{\alpha_1,\gamma}^R[\gamma]}	\bigg)
+\end{align*}
+where
+\begin{align*}
+q(\gamma,\theta) = 
+\begin{cases}
+\frac{1}{\underline{\gamma}_\theta} & \gamma \leq \underline{\delta}_\theta
+\\
+\frac{1}{\gamma} & \gamma \in (\underline{\delta}_\theta,\overline{\delta}_\theta)
+\\
+\frac{1}{\overline{\gamma}_\theta} & \gamma \geq \overline{\delta}_\theta
+\end{cases}
+\end{align*}
+if $\underline{\delta}_\theta<\overline{\delta}_\theta$ and $q(\gamma,\theta) = \frac{1}{\mathbb{E}_\gamma^R[\gamma]}$ otherwise.
+\label{prop:valueinfo}
+\end{restatable}
+Suppose a type $\theta$ sender entertains precisely the same models as the receiver --- i.e. is such that $0 = \underline{\delta}_\theta < \overline{\delta}_\theta = \overline{\gamma}$.
+In this case, the value of information is proportional to $\mathbb{E}_{\alpha_1,\gamma}^R\big[\frac{\alpha_1^2}{\gamma}] - \frac{\mathbb{E}_{\alpha_1}^R[\alpha_1]^2}{\mathbb{E}_{\gamma}^R[\gamma]}$.
+In this case, the receiver gains (relative to the prior) from both not only the local slope at $x_\theta$ ($\beta_1$) but also the steepness of the curvature $\gamma$.
+As $\underline{\delta}_\theta$ increases or $\overline{\delta}_\theta$ decreases, the receiver learns less and less (in expectation) about $\gamma$.
+Finally, when $\underline{\delta}_\theta = \overline{\delta}_\theta$, the receiver effectively learns nothing about the curvature. However, she still retains value from hiring the sender, since she learns about the slope of $f_R$.
+In this final case, the value of information is proportional to $\frac{\Var_{\alpha_1}^R(\alpha_1)}{\mathbb{E}_\gamma^R[\gamma]}$.
+
+Crucially, in the case of a receiver who maximizes $\mathbb{E}[y|x]$, the receiver's \emph{expected utility} does not depend on the sender's choice of $\sigma$.
+The intuition is that different sampling strategies cause upwards and downwards shifts in the set of potential models the receiver entertains, which have no bearing on the \emph{choice} the receiver eventually makes.
+Distant and local sampling will, however, affect the \emph{variance} of the receiver's outcome, which we turn to next.
+
+
+
+%Mathematically, the proof utilizes a result known as ``Stein's Lemma'' that the derivative of $f_R$ and $f_S$ must be the same ``on average'' over $\mu_\theta$ under certain regularity assumptions.
+%As $\sigma \to 0$, for each $f_R \in \phi(f_S;\theta,\mu_\theta)$, the derivative of $f_R$ and $f_S$ converges at the point $x_\theta$.
+%Using (\ref{eq:intercept}), we also have that as $\sigma \to 0$, the value of each $f_R$ and $f_S$ must converge at $f_S$.
+%Thus, all $f_R \in \phi(f_S;\theta,\mu_\theta)$ are (approximately) tangent to $f_S$ at $x_\theta$.
+
+
+
+\section{Extensions: Forecasting and General Functional Forms}
+This section extends the baseline model in two ways. First, it extends the receiver's baseline preferences with \emph{forecast error}.
+As a result, it captures settings where the receiver cares not just about maximizing $y$ but also predicting $y$ accurately.
+We show that the receiver's choices are more accurate when she receives information from a specialist than a generalist.
+Consequently, the receiver is better off hiring a sender who she knows will estimate a worst-case model on average than one who estimates an optimistic model on average.
+
+We also study the model with non-quadratic utility and show that the central intutiions on sender sampling generalize.
+In particular, under a regularity condition, senders who estimate optimistic models always prefer to sample data as generalists rather than specialists, and senders who estimate pessimistic models express the alternative preference.
+Under an additional symmetry assumption, we are able to obtain the same resultant as in Theorem \ref{thm:sampling}.
+While the proofs of these results are significantly more involved, we also walk through that are utilized in the Appendix to make the problem more tractable.
+
+\subsection{Forecast Accuracy}\label{section:forecast}
+So far, we have assumed only that the receiver would like to maximize $\mathbb{E}[y|x]$.
+However, in many settings, the receiver may also directly (or indirectly) value \emph{forecast accuracy}.
+For example, our economist may not just value picking the optimal carbon tax, but also being able to \emph{accurately forecast} the effects of her policy choice.
+Being able to accurately predict the effects of her policy in turn may allow her to better defend her choice to the press or to others in a bureaucracy.
+In this sense, she values intuitively prefers \emph{model certainty}, at least in a neighorhood of her optimal choice, which we have abstracted from so far.
+
+To illustrate the impact of model simplicity and sampling on forecast-minded receivers, we consider a receiver whose expected utility is given by
+\begin{align*}
+(1-\psi)\mathbb{E}^R[y|x]-\psi \Var^R(y|x)	
+\end{align*}
+for $\psi \in (0,1)$.
+Intuitively, these preferences can also be thought of as follows. In a first period, the receiver forms an expectation of $y$.
+In a second period, given this expectation, the utility she reaps is based on her ability to forecast.
+$\psi$ measures her patience; if $\psi = 0$, she does not value the future or forecasting, and only cares about her expectation of $y$.
+As $\psi \to 1$, she places a greater and greater emphasis on forecasting.
+We write a forecast-minded receiver's value as
+\begin{align*}
+V^F(f_S|\theta,\sigma)
+= \max_{x}	(1-\psi)\mathbb{E}_{f_R|f_S,\theta,\sigma}[y|x]-\psi \Var_{f_R|f_S,\theta,\sigma}[y|x].
+\end{align*}
+
+
+
+\begin{restatable}{proposition}{forecast}
+Fix $f_S(x) = \beta_0+\beta_1x-\delta x^2$. Then, the following results holds.
+\begin{enumerate}
+\item If $x^*$ maximizes $\mathbb{E}_{f_R|f_S,\theta,\sigma}^R[y|x]$, then $\Var_{f_S|\theta,\sigma}^R[y|x^*]$ is increasing in $\sigma$ for $\sigma$ sufficiently large. Moreover, there exists $\sigma \in (\underline{\sigma},\overline{\sigma})$ such that $\Var_{f_S|\theta,\sigma}^R[y|x^*] = 0$.
+\item $V^F(f_S|\theta,\sigma)$ is decreasing in $\sigma$ for $\sigma$ sufficiently large.
+\item If $f_S'(x_\theta) = 0$, $V^F(f_S|\theta,\sigma)$ is everywhere decreasing in $\sigma$.
+\item If $f_S'(x_\theta) \neq 0$, $V^F(f_S|\theta,\sigma)$ is increasing in $\sigma$ for $\sigma$ small. Moreover, $V^F(f_S|\theta,\underline{\sigma}) > V^F(f_S|\theta,\overline{\sigma})$.
+\end{enumerate}
+\label{prop:forecast}
+\end{restatable}
+The intuition for the first part of the result is as follows.
+As $\sigma$ increases, the set of models the receiver entertains shift upward or downward. While the receiver's actual choice of $x$ does not change, the expected value of $y$ given $x$ spreads out.
+Thus, $\Var_{f_S;\theta,\sigma}^R[y|x]$ is increasing in $\sigma^2$.
+
+This means that, if the receiver were simply to choose $x^*$ --- which would maximize $\mathbb{E}[y|x]$, distant sampling would be \emph{worse} for the receiver, in the sense that her choices would be \emph{less accurate}.
+Combined with Theorem \ref{thm:sampling}, this suggests that a receiver is better off when facing a sender who estimates pessimistic models --- who have an incentive to local sample as specialists --- than those whose models tend to provide optimistic models --- who \emph{distantly} sample as generalists.
+Crucially, however, we note that there is an \emph{interior} value of $\sigma$ where outcome variance is minimized.
+Thus, neither sampling as a generalist nor a specialist is first-best for the receiver; rather, they would be better off with an intermediate degree of sampling in-between.
+
+The first part in Proposition \ref{prop:forecast} considers the case where the receiver does not internalize the variance of $y$ when choosing $x^*$. However, the next three parts consider what happens when $R$ makes her choice of $x^*$ \emph{internalizing} the variance of outcomes.
+
+The key insight in this case is that the variance of $y$ is precisely minimized when the receiver's models cross the sender's at the points $x_\theta\pm\sigma$.
+This is illustrated in Figure \ref{fig:forecast}.
+Thus, $R$ trades off between a choice $x= x^\dag$ that maximizes her expected utility (at an interior point) and minimizing the variance of outcomes, which happens at $x_\theta \pm \sigma$.
+When $\sigma$ is very large, $R$ is forced to choose arbitrarily extreme points $x_\theta \pm \sigma$ to minimize variance.
+This decreases expected utility sufficiently, giving the second result: $V^F$ is decreasing in $\sigma$ for $\sigma$ large.
+
+When $\sigma$ is small, the logic is more subtle. If $f_S'(x_\theta) = 0$, then her expected utility is simply maximized at $x_\theta$ itself: both $f_S$ and all other models $R$ considers achieve a maximum at $x_\theta$.
+However, for any $\sigma > 0$, there is always a tradeoff between setting $x=x_\theta$ and $x=x_\theta \pm \sigma$.
+Thus, when $f_S'(x_\theta)=0$, $R$'s utility is everywhere decreasing in $\sigma$.
+This is the third result.
+
+However, if $f_S'(x_\theta) \neq 0$, $R$ can be made better off by increasing $\sigma$.
+In particular, $R$ is best off when $\sigma = x^\dag - x_\theta$.
+In this case, choosing $x^\dag$ both maximizes the expected value of $y$ and ensures the expected variance of outcomes is minimized.
+This gives the final result: if $f_S'(x_\theta) \neq 0$, $R$'s utility is increasing in $\sigma$ for $\sigma$ small.
+\begin{figure}[H]
+\centering
+    \caption{Intersection of receiver's models with sender's models}
+\begin{tikzpicture}
+    \begin{axis}[width=0.49\textwidth,
+        xmin=0, xmax=1.0,
+        ymin=0.2, ymax=0.9,
+        axis on top=true,
+        xlabel={Choice $x$},
+        ylabel near ticks,
+        yticklabels={,},
+        xtick={0,1},
+        xticklabels={0,1},
+        extra x ticks={0.184,0.5,0.816},
+        extra x tick labels={$x_\theta-\sigma$,$x_\theta$,$x_\theta+\sigma$},
+        ]
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x-0.1*(x-0.5)^2-(0.7-0.1)*0.1};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x-0.3*(x-0.5)^2-(0.7-0.3)*0.1};
+        \addplot [mark=none, draw=Violet, domain=0:1, samples=100, ultra thick]{0.3+0.6*x-0.7*(x-0.5)^2-(0.7-0.7)*0.1};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x-1.2*(x-0.5)^2-(0.7-1.2)*0.1};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x-2*(x-0.5)^2-(0.7-2)*0.1};
+        \addplot [dashed, mark=none, draw=Persimmon, domain=0:1, samples=100, ultra thick] {0.3+0.6*x-(0.7)*0.1};
+        \addplot [mark=none,draw=black,dashed,domain=0:1] coordinates {(0.5,0) (0.5,1)};
+	\node at (axis cs:0.2,0.67) {\footnotesize Plausible $f_R$s};
+	\node at (axis cs:0.6,0.82) {\footnotesize$f_S$};
+	\draw[-] (axis cs:0.6,0.8) -- (axis cs:0.6,0.65);
+    \addplot [mark=none,draw=black,dashed,domain=0:1] coordinates {(0.184,0) (0.184,0.3404)};
+    \addplot [mark=none,draw=black,dashed,domain=0:1] coordinates {(0.816,0) (0.816,0.7196)};
+    \end{axis}
+    \end{tikzpicture}
+    \label{fig:forecast}
+\end{figure}
+
+Thus, even if the receiver places vanishingly small weight on $\mathbb{E}[y|x]$ and values forecasting error, the sender still has an incentive to depart from local sampling.
+Moreover, unlike in the baseline case, there may be an incentive for the sender to sample more distantly if the receiver values forecast error.
+
+
+
+
+
+\subsection{Non-Quadratic Tradeoffs}\label{section:general}
+While the main model utilizes quadratic utility to express tradeoffs, in this section, we probe robustness of many of the main results to \emph{non-quadratic} utility.
+In particular, we show an analogue of Theorem \ref{thm:sampling}: if $\overline{\sigma}$ is sufficiently large and $S$ estimates an optimistic model, sampling data as a generalist dominates sampling as a specialist.
+If $S$ esimates a pessimistic model, being a specialist dominates being a generalist. 
+
+\paragraph{General Loss Function}
+The following two assumptions consider two generalizations of functional forms for the receiver.
+\begin{assumption}
+The receiver's models and a type $\theta$ sender's models are given by:
+\begin{align}
+&f_R(x) = \alpha_0+\alpha_1 x-\gamma \ell(x-x_\theta)^2 
+\label{eq:generalfunctionrec}	
+\\
+&f_S(x) = \beta_0+\beta_1x-\delta \ell(x-x_\theta)^2 \qquad \theta \in \Theta
+\label{eq:generalfunctionsend}	
+\end{align}
+where $\ell: \mathbb{R} \to \mathbb{R}^+$ is strictly convex and differentiable. Moreover, $\ell(0) = 0$, $\ell'(0) = 0$, and $\ell$ is symmetric around $x=0$.
+\label{assfunction1}
+\end{assumption}
+One way to interpret this functional form is to think of a sender or receiver's model as a \emph{Taylor expansion} around a point $x_\theta$.
+This Taylor expansion includes a constant component, a linear term, and a concave $\mathcal{O}(2)$ term centered at $x_\theta$.
+While the convex loss $\ell(x-x_\theta)$ is symmetric around $x_\theta$, the assumption does allow for $f_R$ or $f_S$ to be asymmetric around a point.
+\footnote{This assumption also subsumes the case where $\ell(x) = x^2$, noting that $(x-x^2)$ can be broken into a constant and linear term plus an $x^2$ term.}
+
+The case where this convex loss itself may be asymmetric is also of interest.
+Thus, we consider the following alternative assumption.
+\begin{assumption}
+The receiver's models and a type $\theta$ sender's models are given by:
+\begin{align}
+&f_R(x) = \alpha_0+\alpha_1 x-\gamma m(x)^2 
+\label{eq:generalfunctionrec}	
+\\
+&f_S(x) = \beta_0+\beta_1x-\delta m(x)^2 \qquad \theta \in \Theta
+\label{eq:generalfunctionsend}	
+\end{align}
+where $m: \mathbb{R} \to \mathbb{R}^+$ is a strictly convex and differentiable. Moreover, there exists $x$ such that $m(x) = m'(x) = 0$.
+Additionally, for all $\alpha_1,\alpha_1' \in \mathbb{R}$, we have
+$P_1^R(\alpha_1) = P_1^R(\alpha_1')$.
+\label{assfunction2}	
+\end{assumption}
+This formulation of models allows for a convex loss function $m$ to take many different shapes.
+However, in this case, we also assume the receiver has a flat prior over not only the constant terms $\alpha_0$ in her models but also linear terms $\alpha_1$.
+We impose this assumption for regularity purposes, and provide more intuition when discussing the proof of the next result.
+
+With these two assumptions in hand, we prove a more general version of Theorem \ref{thm:sampling}.
+\begin{restatable}{theorem}{samplinggeneral}
+Suppose Assumption \ref{assfunction1} holds.	
+If $S$ estimates optimistic models, he positions himself as a generalist $(\sigma_\theta = \overline{\sigma})$
+and sets $x_\theta = \max\{\underline{x},\min\big\{\frac{\mathbb{E}_{\beta_1}^\theta[\beta_1]}{2\mathbb{E}_\gamma^\theta[\gamma]},\overline{x}\big\}\big\}$.
+If $S$ estimates pessimistic models, he positions himself as a specialist $(\sigma_\theta = \underline{\sigma})$ and sets $x_\theta = \underline{x}$ or $\overline{x}$.
+\
+Alternatively, suppose Assumption \ref{assfunction2} holds, suppose $\overline{\sigma}$ is sufficiently large, and fix $x_\theta$.
+If $S$ estimates optimistic models, he \emph{strictly prefers} $\sigma_\theta = \overline{\sigma}$ to $\underline{\sigma}$.
+If $S$ estimates pessimistic models, he \emph{strictly prefers}  $\sigma_\theta = \underline{\sigma}$ to $\overline{\sigma}$.
+\label{thm:samplinggeneral}
+\end{restatable}
+
+First, we note that the first part of Theorem \ref{thm:samplinggeneral} is identical to Theorem \ref{thm:sampling}: a sender who estimates optimistic models positions himself as a generalist, and a sender who estimates pessimistic models positions himself as a specialist.
+The key reason is that the set of plausible $f_R$s must obey the following moment conditions.
+\begin{align}
+&\mathbb{E}_{\mu_\theta}\big[f_R(x)-\beta_0-\beta_1 x + \delta \ell(x-x_\theta)\big] =0
+\label{eq:interceptgeneral}
+\\
+&\mathbb{E}_{\mu_\theta}\big[x\big(f_R(x)-\beta_0-\beta_1 x+\delta \ell(x-x_\theta) \big)\big] =0 \label{eq:slopegeneral}
+\end{align}
+The proof shows that (\ref{eq:slopegeneral}) can be boiled down to the condition that the derivative of all plausible $f_R$s must be the same across the data sample $\mu_\theta$.
+Since, $\mu_\theta(x_\theta,\sigma_\theta)$ and $\ell(x-x_\theta)$ are both symmetric around $x_\theta$, we have
+\begin{align*}
+\mathbb{E}_{\mu_\theta(x_\theta,\sigma_\theta)}[f_R'(x)]
+= \alpha_1-\gamma\mathbb{E}_{\mu_\theta(x_\theta,\sigma_\theta)}[\ell'(x-x_\theta)]
+=\alpha_1-\gamma\mathbb{E}_{\mu_\theta(x_\theta,\sigma')}[\ell'(x-x_\theta)] 
+\qquad \forall \sigma,\sigma' \in [\underline{\sigma},\overline{\sigma}]
+\end{align*}
+Thus, equation (\ref{eq:slopegeneral}) is invariant to $\sigma$.
+This means that, as in the quadratic case, as $\sigma$ changes, the set of models that $R$ considers as a function of $\sigma$ shift up or down, allowing us to back out the same logic as in the original case.
+
+However, if models are not characterized by a symmetric loss $\ell(x-x_\theta)$ around $x_\theta$, it is more difficult to obtain a result.
+Theorem \ref{thm:samplinggeneral} simply states that, fixing $x_\theta$, $S$ prefers being a generalist to being a specialist if he estimates optimistic models (and the opposite holds if he estimates pessimistic models).
+The reason is that, if the convex portion of a receiver's models are \emph{not} symmetric around $x_\theta$, the analogue of (\ref{eq:slopegeneral}) no longer holds.
+I.e., we do not necessarily have that
+\begin{align*}
+\mathbb{E}_{\mu_\theta(x_\theta,\sigma_\theta)}[f_R'(x)]
+=
+\alpha_1-\gamma\mathbb{E}_{\mu_\theta(x_\theta,\sigma_\theta)}[m(x)]
+\end{align*}
+is invariant with respect to $\sigma$.
+As a result, the proof allows $\alpha_1$ to change to ``absorb'' any changes to $\mathbb{E}_{\mu_\theta(x_\theta,\sigma_\theta)}[m(x)]$ with respect to $\sigma$.
+It is here where we utilize the condition in Assumption \ref{assfunction2} that assigns the same prior mass to different $\alpha_1$ values in the receiver's prior.
+This means that, for each $f_R(x)$ with a given $\gamma$ value, changing $\sigma$ not only changes $\alpha_0$ (as in the benchmark and symmetric loss models) but also $\alpha_1$.
+
+Consequently, the value of the receiver's objective at her optimal choice $x^*$ does not have an intuitive expression, and depends on nonintuitive features of the third derivative of $m(\cdot)$.
+However, the proof shows that if the sender estimates optimistic models, the value of each $f_R(x)$ the receiver entertains at $x_\theta$ is \emph{increasing} in $\sigma$.
+Hence, the value of each $f_R$ at $x_\theta$ for sufficiently high $\overline{\sigma}$ must necessarily be higher than the receiver's optimum $x^*$ at $\underline{\sigma}$.
+The intuition for the case where the sender estimates pessimistic models, as before, is flipped.
+
+\subsection{Multidimensional Choices}
+While the baseline model considered a single choice variable $x$, we can also consider what happens when choices are multidimensional.
+For example, imagine that our economist can shape consumer welfare not just through a carbon tax but also a clean energy subsidy.
+We briefly show that many of the findings of the baseline model generalize.
+However, we also show that when the sender \emph{samples} data about multiple variables, he always has an incentive to introduce nearly perfect \emph{collinearity} between them.
+In particular, if there are two choice variables --- $x_1$ and $x_2$ --- and the sender can choose how \emph{correlated} the two variables are when sampling the data, he will either make them as perfectly correlated as possible, or perfectly \emph{anticorrelated} as possible.
+
+\paragraph{Multidimensional Models}
+Suppose now that the receiver's choices are given by $x = (x_1,\ldots,x_n) \in \mathbb{R}^n$.
+The models $f_R$ our receiver entertains are now as follows.
+\begin{assumption}
+	For each $f_R \in F_R$, we have
+	\begin{align*}
+	f_R(x) = \alpha_0 + \alpha^T x - x^T\gamma x,	
+	\end{align*}
+	where $\alpha_0 \sim P_0^R$, $\alpha  \sim P_1^R$ for measures on $\mathbb{R}^n$ on , and $\gamma \sim P_0^R$ on a set $\Gamma$. $\Gamma$ is a compact, convex set of positive-semidefinite matrices such that $0 \in \Gamma$ and such that there exists $\gamma \in \Gamma$ with $\gamma_{ii}>0$ for all $i$.
+	Additionally, we have $P_0^R(\{\alpha_0\})=P_0^R(\{\alpha_0\})$ for all $\alpha_0,\alpha_0'$.
+%	Moreover:
+%	\begin{itemize}
+%	\item Let $\overline{\Gamma}$ be a compact set of $n \times n$ positive-semidefinite matrices such that $\overline{\gamma}_{ii} > 0$ for each $i \in \{1,\ldots,n\}$ and $\overline{\gamma} \in \overline{\Gamma}$.
+%	\item Let $\Gamma = \{\gamma : \gamma = t\overline{\gamma}, t \in [0,1], \overline{\gamma} \in \overline{\Gamma}\}$. Then, $\gamma \sim P_\gamma^R$ on $\Gamma$.
+%	\end{itemize}	
+	\label{assmultimodel}
+\end{assumption}
+$f_R$ now \emph{generalizes} the idea of a quadratic data generating process to a multivariate setting using a set of concave \emph{quadratic forms}.
+This set of forms is given by a set of positive-semidefinite matrices $\Gamma$.
+%generated by taking a set of ``extreme'' positive semidefinite matrices $\overline{\Gamma}$ and, for each $\overline{\gamma} \in \overline{\Gamma}$, scaling it by $t \in [0,1]$. ``Higher $t$'' matrices are associated with ``more convex'' quadratic forms, and ``lower $t$'' matrices are ``less convex.''
+%This formalization 
+
+We now assume the type space $\Theta$ of senders is given by a set of compact, convex subsets of $\Gamma$
+\begin{assumption}
+A type $\theta$ sender provides models of the form.
+\begin{align*}
+f_S^\theta(x) = \beta_0+\beta^Tx-x^T\delta x,	
+\end{align*}
+where $\delta \in \theta$ for $\theta \subseteq \Gamma$ closed and convex.
+Moreover,  $\theta \cap \theta' = \emptyset$ for all $\theta \neq \theta' \in \Theta$.
+Additionally, a type $\theta$ sender has a prior $P_\delta^\theta$ over $\delta \in \theta$.
+Finally, we have $P_\delta^\theta(\partial \theta) > 0$, where $\partial \theta$ is the \emph{boundary} of $\theta$.
+\label{assmultitype}	
+\end{assumption}
+
+Finally, we describe how the sender samples data in multiple variables.
+As before, we allow the sender to choose a ``mean'' $x_\theta$ and a variance-covaraince matrix $\Sigma_\theta$.
+Formally, let $\epsilon \in \mathbb{R}^n$ be a \emph{spherically symmetric} random vector that admits a density with $\mathbb{E}[\epsilon]=0$ and $\Cov(\epsilon) = I_n$.
+Let $\Sigma_\theta$ be a symmetric positive-definite matrix.
+Then, if the sender chooses $(x_\theta,\Sigma_\theta)$, his data $x$ are sampled with respect to the distribution $\mu_\theta(x_\theta,\Sigma_\theta$, such that:
+\begin{align*}
+\mu_\theta(x_\theta, \Sigma_\theta) = x_\theta + \Sigma_{\theta}^{\frac{1}{2}}\epsilon.
+\end{align*}
+We place the following structure on data sampling.
+\begin{assumption}
+For each $i$, let $[\underline{x}_i,\overline{x}_i] \subseteq \mathbb{R}^n$ be a non-degenerate compact interval.
+Then, we must have $x_\theta \in \prod_{i=1}^n [\underline{x}_i,\overline{x}_i]$. Additionally,
+\begin{enumerate}
+\item $\sigma_i := \sqrt{\Sigma_{\theta,ii}} \in [\underline{\sigma},\overline{\sigma}]$ and
+\item $\rho_{ij} := \frac{\Sigma_{\theta,ij}}{\sigma_i \sigma_j} \in [-\overline{\rho},\overline{\rho}]$
+\end{enumerate}
+for $\overline{\rho} \in (0,1)$ arbitrarily close to $1$.
+\end{assumption}
+This assumption is a multidimensional generalization of the idea that the ``variance'' of a variable $x_i$ must be between $\underline{\sigma}^2$ and $\overline{\sigma}^2$.
+However, the key addition with $n$ choice variables is that the sender can choose the degree of \emph{correlation} between different variables when he samples data.
+We bound the correlation away from $-1$ and $1$ to ensure the well-definedness of a solution.
+
+\paragraph{Learning with Multidimensional Choices}
+The following result generalizes receiver learning in multiple variables.
+\begin{restatable}{proposition}{reductionmulti}
+\label{prop:reductionmulti}
+Suppose $f_S = \beta_0+\beta_1'x-x'\gamma x$ best-fits the data and $\mu_\theta = \mu_\theta(x_\theta,\Sigma_\theta)$. Then, for all $f_R \in \phi(f_S;\theta,\mu_\theta)$, we have:
+\begin{align*}
+f_R(x) = f_S(x)+\trace\big((\gamma-\delta)\Sigma_\theta\big)-(x-x_\theta)'(\gamma-\delta)(x-x_\theta).
+\end{align*}
+\end{restatable}
+The proposition reads almost identically to Proposition \ref{prop:reduction}, and the intuition is similar as well.
+However, in place of the original scalar ``variance'' term, we instead have $\trace\big((\gamma-\delta)\Sigma_\theta\big)$.
+To see the impact that this has on the set of models the receiver will entertain, consider the following example with $x \in \mathbb{R}^2$. 
+\begin{align*}
+\gamma = \begin{pmatrix} 1 & 0 \\ 1 & 1 \end{pmatrix},
+\qquad
+\delta = \begin{pmatrix} 1 & 0 \\ 0 & 1 \end{pmatrix},
+\qquad
+\Sigma_\theta = \overline{\sigma}^{\,2}\begin{pmatrix} 1 & \rho \\ \rho & 1 \end{pmatrix}
+\end{align*}
+Here, the receiver's model allows for a ``cross effect'' between $x_1$ and $x_2$, while the sender's model neglects it. In turn, we thus have:
+\begin{align*}
+\trace\big((\gamma-\delta)\Sigma_\theta\big)
+=\overline{\sigma}^2\trace\bigg(\begin{pmatrix} 0 & 0 \\ 1 & 0 \end{pmatrix}\bigg(\begin{pmatrix} 1 & \rho \\ \rho & 1 \end{pmatrix}\bigg)
+=\overline{\sigma}^2\rho.
+\end{align*}
+This trace term represents, as before, the \emph{gap} between the sender's original model and the receiver's model at $x_\theta$. The sender can \emph{increase} this gap if he makes $\rho$ as large as possible.
+
+More formally, the sender in this case provides models that suffer from \emph{neglecting interactions}.
+In our running example, the scientist whom the economist hires may effectively evaluate the effects of both a subsidy and tax \emph{separately}, but not take into account the \emph{interaction} of their effects on certain firms. 
+
+As before, the receiver is aware of the sender's misspecification, and she entertains additional models. However, the sender can make the receiver have a rosier view of these models if he artificially creates a high degree of correlation between $x_1$ and $x_2$ when sampling data.
+In our example, if the scientist cannot figure out how to model these interactive effects, he compensates by skewing his data collection towards settings where both a carbon tax and an energy subsidy are active at the same time, rather than data that cleanly isolates the effects of one or the other. 
+
+
+\paragraph{Results with multidimensional choices}
+Generalizing the intuitions above, we introduce the following notation.
+Let $\delta \in \partial \theta$ be a matrix on the boundary of $\theta$. We denote $\Delta(\delta)$ as follows:
+%\begin{align*}
+%\Delta(\delta|\Sigma_\theta) = 
+%\mathbb{E}_R^\gamma\big[\trace\big((\gamma-\delta)\Sigma_\theta\big)\big|\delta,\theta\big]
+%=\mathbb{E}_R^\gamma\bigg[\sum_{i=1}^n (\gamma_{ii}-\delta_{ii})\Sigma_{ii,\theta} +\sum_{i<j} \big[(\gamma_{ij}+\gamma_{ji})-(\delta_{ij}+\delta_{ji})\big]\Sigma_{ij,\theta}\big|\delta,\theta\bigg].
+%\end{align*}
+\begin{align*}
+\Delta(\delta) = \mathbb{E}_R^\gamma[\gamma|\delta,\theta]-\delta.
+\end{align*}
+As above, if $\theta \subsetneq \Gamma$, when $R$ sees a model with $\delta$ on the boundary of $\theta$, she entertains additional models.
+The intuitive mapping from the one-dimensional problem to the multidimensional one can be seen by looking at the diagonal entries of $\Delta(\delta)$.
+If the $i^{th}$ diagonal entry is \emph{positive}, this means that $S$ tends to \emph{neglect tradeoffs} with respect to variable $x_i$.
+If it is negative, he tends to \emph{exaggerate} tradeoffs.
+Thus, we say that a sender estimates an \textbf{optimistic model in $x_i$} if $\mathbb{E}_\delta^\theta[\Delta_{ii}(\delta)] > 0$ and a \textbf{pessimistic model in $x_i$} if $\mathbb{E}_\delta^\theta[\Delta_{ii}(\delta)] < 0$.
+
+However, what happens on the \emph{non-diagonal} entries of $\Delta$ is also of interest. Supppose $\Delta_{ij}(\delta)+\Delta_{ji}(\delta) > 0$. This means that the receiver expects the coefficients on the interactions of $x_i$ and $x_j$ to be \emph{larger} than what the sender provides.
+We say that this sender \textbf{neglects interactions between $x_i$ and $x_j$}.
+If $\Delta_{ij}(\delta)+\Delta_{ji}(\delta) < 0$, the sender \textbf{exaggerates interactions between $x_i$ and $x_j$}.
+
+With these new results in hand, we can state our key multidimensional result.
+\begin{restatable}{theorem}{samplingmulti}
+
+Senders who estimate optimistic models in $x_i$ position themselves as generalists. Those who estimate pessimistic models in $x_i$ position themselves as specialists. I.e.,
+\begin{itemize}
+\item if $\mathbb{E}_\delta^\theta[\Delta_{ii}(\delta)] > 0$, then $\sigma_{i,\theta}=\overline{\sigma}$.
+\item If $\mathbb{E}_\delta^\theta[\Delta_{ii}(\delta)] < 0$, then $\sigma_{i,\theta}=\underline{\sigma}$.	
+\end{itemize}
+Moreover, senders who neglect interactions between $x_i$ and $x_j$ create collinearity between $x_i$ and $x_j$. Senders who exaggerate interactions create anticollinearity between $x_i$ and $x_j$. I.e., 
+\begin{itemize}
+\item if $\mathbb{E}_\delta^\theta[\Delta_{ij}(\delta)+\Delta_{ji}(\delta)] > 0$, then $\Sigma_{ij,\theta}=\overline{\rho}\sigma_{i,\theta}\sigma_{j,\theta}$.
+\item If $\mathbb{E}_\delta^\theta[\Delta_{ij}(\delta)+\Delta_{ji}(\delta)] < 0$, then $\Sigma_{ij,\theta}=-\overline{\rho}\sigma_{i,\theta}\sigma_{j,\theta}$.
+\end{itemize}
+\label{thm:samplingmulti}
+\end{restatable}
+
+\section{Gains from Simplification}\label{section:simple}
+
+Need result on asymmetric gain here.
+
+So far, we have taken model oversimplification as an exogenous feature of our informational environment: different sender types present models that are artificially optimistic or pessimistic.
+This section studies when a sender benefits from simplification, thus providing an \emph{endogenous} channel for the sender to provide simplified models and showing that the sender's use of simple models is a \emph{strategic} choice.
+
+In the baseline model, we assumed that senders' types (as subintervals of $[0,\overline{\gamma}]$) were exogeneous and non-overlapping.
+We first return to this setting but allow senders' types to overlap.
+We show that when there are different types of senders, they benefit only when one sender's type  intersects with the \emph{boundary} of another sender's type.
+However, if one sender is made better off by having an overlying type, the other is necessarily made worse off, thus providing a channel for senders' types to not overlap in equilibrium.
+
+Using these intuitions, we then consider the problem of an ``omniscient'' sender who can model: that is, the sender thinks about tradeoffs in precisely the way the over $\delta$ on the entirety of $[0,\overline{\gamma}]$.
+This designer can either choose to provide the true model, or to draw different types of senders with different probabilities.
+The problem can be thought of as akin to a consulting firm ``drawing'' teams of consultants that can only think about tradeoffs in specific ways, or an AI model designer ``drawing'' different models that are artificially constrained in how they can think.
+
+We show that if this designer has a continuous prior over $\gamma$, the optimal design of the type space is composed of \emph{singletons}. In particular, for every $\gamma \in [0,\overline{\gamma}]$, there is a type $\theta = \{\gamma\}$.
+Thus, sender types each have a fixed (but arbitrary) of modeling the receiver's tradeoff, meaning the receiver \emph{never} learns the true value of $\gamma$.
+That is, these senders \emph{calibrate} their models to arbitrary values.
+This result emerges both due to the \emph{form} of model simplicity (uncertainty about the magnitude of tradeoffs) and different senders' use of strategic sampling.
+
+We also characterize the solution where the designer has a discrete prior over $\gamma$, in which case the optimal design involves either \emph{singleton} $\gamma$ values or pooling at most \emph{two} $\gamma$ values into a single type.\footnote{The case where the designer has a continuous prior with mass points does not have a well-designed solution. But, under a perturbation assumption, the optimal type space is composed of an interval and singleton partition, where the upper bound of each interval occurs on a mass point, and ``interval'' senders always distantly sample.}
+
+
+
+
+\subsection{Characterizing Benefits from Oversimplification}
+Change the notationhere.
+The key driver of the result is that strategic sampling creates a \emph{gap} between $f_S$ and the other models the receiver entertains.
+We denote this gap $\Delta(f_S,\sigma_\theta)$:
+\begin{align*}
+\Delta(f_S,\sigma_\theta) := 	\mathbb{E}_{f_R|f_S}[y|x^*,\sigma_\theta]-f_S(x^*).
+\end{align*}
+
+The following corollary shows that this gap disproportionately allows the receiver to gain more from optimistic models that \emph{neglect} tradeoffs than from pessimistic models that exaggerate them.
+\begin{corollary}
+$\Delta(f_S,\sigma_\theta)$ changes as follows.
+\begin{itemize}
+\item If $f_S$ is an optimistic model so that $\sigma_\theta = \overline{\sigma}$, then as $\overline{\sigma}\to\infty$, $\Delta(f_S,\sigma_\theta) \to \infty$.	
+\item If $f_S$ is a pessimistic so that $\sigma_\theta = \underline{\sigma}$, then as $\underline{\sigma}\to0$, $\Delta(f_S,\sigma_\theta) \to(\overline{\gamma}-\mathbb{E}_R[\gamma])(x^*-x_\theta)^2<\infty$.
+\end{itemize}
+\end{corollary}
+The interpretation of this corollary is that a \emph{generalist} sender who presents optimistic models makes a receiver have ``rosier views'' about the maximal expected value of $y$ than the \emph{specialist} sender who presents pessimistic models, relative to the provided model $f_S$.
+
+Previously, we assumed that senders differed in their ability to model the quadratic component of the receiver's models, that different senders could model this component in distinct ways, and thus that the receiver could fully back out the sender's type from the model she received.
+However, we now relax Assumption \ref{asstype} and allow the sender's types to have overlapping supports.
+I.e., we consider the case where there exist $\theta,\theta' \in \Theta$ such that $\theta' \cap \theta \neq \emptyset$.
+
+Let $\delta \in \theta \cap \theta'$.
+Conditional on seeing a model of the form $y = \beta_0+\beta_1x -\delta x^2$, the receiver does not know whether this model came from a type $\theta$ or type $\theta'$ sender.
+In particular, we can characterize when uncertainty about the source of the signal can actually work in a sender's benefit, and when it hurts the sender.
+\begin{restatable}{proposition}{simplegain}
+Consider two types of senders $\theta = [\underline{\delta},\overline{\delta}]$ and $[\underline{\delta}',\overline{\delta}']$ such that $\theta \cap \theta' \neq \emptyset$ and $\theta \cap \theta' \subseteq \theta^\circ$.
+Suppose $R$ receives information from either sender with positive probability.
+Fix a sender model $f_S(x)=\beta_0+\beta_1x-\delta x^2$ such that $\delta \in \theta \cap \theta'$.
+Given $f_S(x)$, a type $\theta$ sender's utility strictly increases (decreases) from the existence of type $\theta'$ if one of the following hold.
+\begin{enumerate}
+\item $\delta \in \theta^\circ \neq \emptyset$, $\delta = \overline{\delta}'$, and $\theta'$ distantly (locally) samples.
+\item $\delta \in \theta^\circ \neq \emptyset$, $\delta = \underline{\delta}'$, and $\theta'$ locally (distantly) samples.
+\item $\delta = \overline{\delta}$, $\theta^\circ = \emptyset$, type $\theta$ locally samples, and $\theta'$ distantly (locally) samples.
+\item $\delta = \underline{\delta}$, $\theta^\circ = \emptyset$, type $\theta$ distantly samples, and $\theta'$ locally (distantly) samples.
+\item $\theta^\circ = \emptyset$, $\theta'^\circ \neq \emptyset$, $\delta = \overline{\delta}'$, and $\theta'$ distantly (locally) samples.
+\item $\theta^\circ = \emptyset$, $\theta'^\circ \neq \emptyset$, $\delta = \underline{\delta}'$, and $\theta'$ locally (distantly) samples.
+\end{enumerate}
+\label{prop:simplegain}
+\end{restatable}
+The first part of the proposition shows that the receiver's \emph{maximal expected utility} tends to be higher from models with higher $\gamma$ than the sender's under distant sampling.
+Although the proposition has many cases, they can be grouped as follows.
+
+The first two cases correspond to situations where the sender's model has a $\delta$ value in the \emph{interior} of $\theta$.
+Without $\theta'$, $R$ would simply deduce that this was the true model.
+However, with $\theta'$, $R$ may entertain \emph{higher} $\gamma$ models or \emph{lower} $\gamma$ models if $\delta$ is on the boundary of $\delta'$.
+If $\delta = \overline{\delta}'$ and $\theta'$ distantly samples, these lead to a gain in $S$'s expected utility, since any higher $\gamma$ models lie \emph{above} the original model.
+If $\delta = \underline{\delta}'$ and $\theta'$ locally samples, $R$ entertains lower $\gamma$ models that lie \emph{below} the original model.
+
+The next two cases consider situations where $\delta$ is at the boundary of $\theta$.
+It may be that case that $\delta = \overline{\delta}$, but that a type $\theta$ sender ex-ante thought $\underline{\delta}$ was more likely and thus locally sampled, even though ex-post he would have preferred distant sampling.
+In this case, he is made better by a sender who considers the same models but distantly samples.
+There is an analogous case for $\delta = \underline{\delta}$.
+
+The final two cases consider situations where $\theta = \{\delta\}$ is a singleton.
+In this case, if $R$ thinks the model came from type $\theta$, she  will consider both higher and lower $\gamma$ value models.
+However, if $\delta = \overline{\delta}'$ and $\theta'^\circ$, she may think that model came from $\theta'$.
+Because $\theta^\circ \neq \emptyset$, she will \emph{only} consider models with higher $\gamma$ that lie \emph{above} the original model.
+A similar logic applies to $\delta = \underline{\delta}'$.
+
+A corollary of this result, however, is that if both $\theta$ and $\theta'$ senders emerge with positive probability, interactions are zero-sum: if one sender is made better off by another, the other is made worse off.
+\begin{corollary}
+Conditional on providing a model $f_S(x)$, suppose a type $\theta$ sender's expected utility increases from a type $\theta'$ sender's existence.
+Then, the type $\theta'$ sender's expected utility decreases from type $\theta$ sender's existence.
+\end{corollary}
+
+
+\subsection{Optimal Type Space Design}
+Using these results, we consider the problem of a ``sophisticated'' type-space designer $D$. 
+$D$ has a prior over $\beta_0,\beta_1,\delta$ given by $P_0^D$, $P_1^D$, $P_\gamma^D$.
+We write as $P_{f_S}$ his prior over models $f_S$.
+
+We suppose that $D$ faces the following problem.
+Conditional on a model $f_S$ probability $q_0$, $R$ believes she receives the true model (and does not consider alternative models).
+With probability $1-q_0$, she believes the true model comes from the type space $\Theta$.
+The leading interpretation is that $R$ contracts from multiple senders, and always deals with a ``truthful'' sender who provides the true model with an exogenous probability.
+
+The order of events is as follows.
+$D$ first chooses a type space $\Theta$ such that all elements in $\Theta$ are closed intervals in $\Gamma$ (potentially degenerate).
+Then, $D$ chooses a distribution over types $T_\theta$.
+The sender contracts the services of a sender, and receives a model from the ``true'' sender with probability $q_0$ or from the type space $\Theta$ with probability $1-q_0$.
+In the latter case, a sender is randomly drawn from the type space $\Theta$ according to $T_\theta$.
+In either case, the deployed sender supplies the model of best fit.
+
+The optimal characterization of the type space is as follows.
+\begin{restatable}{theorem}{optimaltype}
+Suppose $P_\gamma^D$ is continuous.
+Then, the optimal type space is the collection of singletons on $[0,\overline{\gamma}]$: $\Theta = \big\{\{\delta\} : \delta \in \Gamma\big\}$.
+Moreover, $T_\theta$ places positive mass on all points with positive mass in $P_\gamma^R$.
+$D$'s utility is increasing in $q_0$.
+\label{thm:optimaltype}
+\end{restatable}
+
+This result relies on many of the intuitions of Proposition \ref{prop:simplegain}.
+Consider a model of the form $f_S(x) = \beta_0+\beta_1x-\delta x^2$.
+For each $\delta$, we introduce a sender of type $\{\delta\}$.
+We refer to this sender as an ``arbitrary'' type sender, in the sense that he provides models with an arbitrarily fixed value of $\delta$. 
+Conditional on seeing $f_S(x)$, $R$ would believe that it either came from the ``true'' type of sender or the ``arbitrary'' type of sender.
+In the former case, the receiver would believe $f_S$ is the true model.
+In the latter case, because the arbitrary type of sender sample strategically, $R$'s maximal expected utility from considering alternative models would be higher than from just consider $f_S$.
+The more likely the latter case, the higher $R$'s maximal expected utility is, from the designer's perspective; thus $D$'t utility is increasing in $q_0$.
+The designer thus always gains from creating an ``arbitrary'' sender for each $\delta \in \Gamma$ and matching the probabilities of each of these types to the value of $\gamma$ he entertains in his prior.
+
+Naturally, $D$ could also introduce a sender of type $\theta = [\underline{\delta}_\theta,\overline{\delta}]$ with $\theta^\circ \neq \emptyset$.
+In this case, the assumption that $P_\gamma^D$ has a continuous density is crucial.
+In particular, this sender could distantly sample, meaning that conditional on seeing $\delta = \overline{\delta}$, $R$ would entertain even higher expected utility models than if she were to think it only came from an arbitrary type $\{\overline{\delta}\}$ sender.
+To guarantee this even sharper gain from model simplification, for any model with $\delta \in \theta^\circ$, type $\theta$ would necessarily have to provide the \emph{true model}, erasing any potential gains from tradeoff under/overestimatement.
+Since $\overline{\delta}$ is a singleton, it has measure $0$ in $D$'s prior, while $\theta^\circ$ has measure greater than $0$.
+
+Because $D$'s utility is increasing in $q_0$, if possible, $D$ would send $q_0 \to 1$.
+In this sense, a type space where senders use a fixed (but entirely arbitrary) way of modeling tradeoffs can be seen as the limiting case for a situation where a designer begins by modeling the ``true model'' and then artificially simplifying his model. 
+
+
+As a result, we also consider separately the case where $P_\gamma^D$ is \emph{discrete}.
+In this case, the optimal type space consists of both \emph{singletons} and \emph{doubles} --- i.e. $D$ either provides an arbitrary model or pools together no more than two values of $\delta$ together.
+We write $\Gamma = \{\gamma_i\}_{i \in \mathbb{N}}$.
+\begin{restatable}{proposition}{optimaltypediscrete}
+Suppose the type space designer's prior $P_\gamma^D$ over $\Gamma$ is discrete.
+Then the optimal type space is given by a partition of $\Gamma$ into a combination of singletons $\{\delta_i\}$ and doubles $\{\delta_i,\delta_{i+1}\}$.
+\label{prop:optimaltypediscrete}
+\end{restatable}
+
+
+
+\paragraph{Version 2:}
+
+The order of events is as follows.
+$D$ first chooses a type space $\Theta \subseteq \mathcal{P}(\Gamma)$. $\Theta$ must have the following properties.
+\begin{enumerate}
+\item For each $\theta \in \Theta$, $\theta$ must be a closed (potentially degenerate) interval.
+\item If $\theta^\circ \neq \emptyset$, there exists $\Delta$ arbitrarily small such that the length of $\theta$ can be no smaller than $\Delta$
+\end{enumerate}
+The first property is definitional.
+The second ensures the existence of a well-defined solution to the problem.
+
+The designer chooses a distribution of $T_\theta$ over $\Theta$.
+The receiver then contracts a sender to investigate a choice $x_\theta$.
+A type $\theta$ sender is randomly drawn from $\Theta$ according to $T_\theta$.
+That sender strategically chooses a sampling strategy $\mu_\theta$ and provides a model $f_S^\theta$ to the receiver who then updates.
+
+$D$'s expected utility is the same as senders': he would like to maximize $R$'s expectation of her utility, given she sees a model $f_S^\theta$ and knows type $\theta$ sender samples using a distribution $\mu_\theta$.
+From Proposition \ref{prop:forecast} and Theorem \ref{thm:sampling}, we can expression $R$'s expected utility, conditional on seeing a model $f_S = \beta_0+\beta_1-\delta x^2$ as
+\begin{align*}
+V^R(f_S) = \max_x \mathbb{E}_{\theta|f_S}\bigg[f_S(x)+(\mathbb{E}^R[\gamma|\delta,\theta]-\delta)\big(\sigma_\theta^2-(x-x_\theta)^2\big)\bigg].
+\end{align*}
+In turn, $D$ in turn integrates $V^R$ over his prior over models
+\begin{align}
+U(T_\Theta,\Theta)
+=
+\int_{\Theta}\int_{F_R} V^R(f_S)dP(f_S|\theta)dT(\theta)	
+\end{align}
+
+\begin{restatable}{theorem}{optimaltypealt}
+The optimal type space design is characterized by an interval $[\underline{\delta},\overline{\delta}]$.
+If $\underline{\delta}>0$, there is a type $\underline{\theta} = [\underline{\delta},\underline{\delta}+\Delta$.
+If $\overline{\delta}<\overline{\gamma}]$, there is a type $\overline{\theta} = [\overline{\delta}-\Delta,\overline{\delta}]$.
+Then, $\Theta$ is a collection of singletons with two intervals at the end:
+Then, $\Theta \underline{\theta} \cup \overline{\theta} \cup \{\delta\}_{\delta \in [\underline{\delta},\overline{\delta}]-\big(\overline{\theta} \cup \underline{\theta}\big)}$.
+If $[\underline{\delta},\overline{\delta}]=[0,\overline{\gamma}]$, then $\Theta$ is a collection of singletons: $\Theta = \{\{\delta\} : \delta \in \Gamma\}$.
+\label{thm:optimaltypealt}
+\end{restatable}
+
+
+
+
+\section{Competition}\label{section:competition}
+This section is largely under construction! See a sketch below, but please click the link to see if this is available in a future draft.
+
+We now consider competition between multiple senders who provide information at market prices. Following the previous section, we consider senders drawn from arbitrary type spaces, i.e. such that $\Theta = \{\{\delta\} : \delta \in \Gamma\}$.
+In particular, we consider two senders.
+
+We assume that senders each incur a cost of $c$ for providing models.
+This could represent the price of collecting data for the sender, as well as the labor required to fit the model, present the model to the receiver, and other managerial or overhead expenses.
+The two senders compete over prices.
+$R$ purchases a model from whomever provides his services at a lower price.
+This is due to the fact that $R$ cannot distinguish the two senders; thus, even if one sender precommitted to always providing the true model (instead of a simplified one), 
+
+A type $\theta$ sender's profits from receiving a contract from $R$ are given by price less cost, plus a reputational component.
+Profits are written as follows.
+\begin{align}
+p-c+\omega
+\mathbb{E}_{f_R}\bigg(\mathbb{E}_{f_S^\theta}\big[\max_{x}\mathbb{E}_{f_R|f_S^\theta}[f_R(x)]-	\max_{x}f_R^\theta(x)\big]\bigg) \qquad \omega > 0
+\end{align}
+The main innovation is the reputational component multiplied by $\omega > 0$.
+The interpretation is that $R$ values not only immediate profits from the project, but also a further gain from making $S$ optimistic (such as follow on contracts, a gain from the approval of a project, or additional reputational considerations).
+The key difference in this case is that the reputational gain is normalized to $0$ relative to $R$'s true model.
+
+\begin{restatable}{proposition}{pricing}
+Suppose $R$ only buys from one sender.
+Then, both senders set $p<c$.
+\label{prop:pricing}
+\end{restatable}
+The intuition is as follows.
+Suppose both senders priced at $c$.
+In this case, the reputational gain for both senders would be positive.
+However, because each type $\theta$ samples stragecically, $R$ entertains models that lie above $f_S^\theta$, meaning the reputational gain is positive.
+Thus, both senders are willing to price below $c$.
+
+The key insight, however, is that this requires $R$ to purchase information from \emph{only} a single sender.
+However, $R$ could in fact purchase models from both senders simultaneously.
+In this case, the result can generate an increase in prices.
+Recall in this case that the value of information from the ``arbitrary'' type space is given by
+\begin{align*}
+V^I = \frac{1}{4}\frac{\Var_{\alpha_1}^R(\alpha_1)}{\mathbb{E}_{\gamma}^R(\gamma)}
+\end{align*}
+Write the equilibrium of this model as $c-\omega\kappa$.
+By contrast, the value from full information is given by
+\begin{align*}
+V^F = \frac{1}{4}\mathbb{E}_{\alpha_1}^R\bigg(\frac{\alpha_1^2}{\gamma}\bigg)-\frac{\mathbb{E}_{\alpha_1}^R(\alpha_1)}{4\mathbb{E}_{\gamma}^R(\gamma)}
+\end{align*}	
+Then, we have the following result.
+\begin{restatable}{theorem}{sequential}
+Suppose $V^F-2c< V^I-c+\omega\kappa$. 
+Then, $p=c$, and $R$ buys from both senders in equilibrium.
+\label{thm:sequential}
+\end{restatable}
+First, note that when $R$ buys from both receivers, she is able to recover the true model; in particular, she has four conditions with which to identify the true model.
+In the case where $R$ buys from both senders, this thus erases any of the gains $\omega k$ from making $R$ optimistic, generating an increase in prices relative to the situation in which $R$ only purchased from one sender.
+
+For this to occur in equilibrium, it must be incentive compatible for $R$ to want to purchase information from two senders. In particular, $R$ must prefer to buy models from two senders as opposed to just buying from one (at a price below $c$).
+A necessary condition is that $c$ is sufficiently low, but even then, it must be that the reputational gain (and hence the amount by which senders are willing to mark down prices) is also sufficiently small to justify not simply purchasing from one sender, even if the quality of information is lower.
+
+
+\section{Conclusion}\label{section:conclusion}
+This section is under construction! Please click the link to see if this is available in a future draft.
+
+\pagebreak
+
+
+\bibliographystyle{chicago}
+\bibliography{citations}
+\pagebreak
+
+\begin{appendix}
+
+\section{Proofs of Results}
+
+\reduction*
+\begin{proof}
+We rewrite the sender's model as a local expansion around $x_\theta$: $f_S(x) = \tilde{\beta}_0+\tilde{\beta}_1 (x-x_\theta)-\delta(x-x_\theta)^2$, where $\tilde{\beta_1} = \beta_1-2\delta x_\theta$.
+Because sender type intervals $\theta$ are non-overlapping, the value of $\delta$ uniquely pins down the sender's type $\theta$.
+
+Suppose $f_R \in \phi(f_S;\theta,\mu_\theta)$.
+Similarly expanding $f_R$ around $x_\theta$, we have:
+\begin{align*}
+f_R(x) = \tilde{\alpha}_0 + \tilde{\alpha}_1 (x-x_\theta)-\gamma(x-x_\theta)^2,	
+\end{align*}
+where $k$ is a constant.
+Because $\mu_\theta$ is symmetric, it is elliptical (in one dimension).
+By Stein's Lemma \citep{landsman2008stein}, equation (\ref{eq:slope}) can be written as
+\begin{align*}
+\mathbb{E}_{\mu_\theta}\big[x\big(f_R(x)-f_S(x) \big)\big]
+&= \Cov_{\mu_\theta}(x,f_R(x)-f_S(x))
+\\
+&=
+\sigma^2 \mathbb{E}_{\mu_\theta}[f_R'(x)-f_S'(x)]
+\\
+&=
+\sigma^2 \mathbb{E}_{\mu_\theta}[\tilde{\alpha}_1-2\gamma(x-x_\theta)-\tilde{\beta_1}+2\delta (x-x_\theta)]
+= 0
+\end{align*}
+Because the mean of $\mu_\theta$ is $x_\theta$, this yields the condition $\tilde{\alpha}_1 = \tilde{\beta}_1$ which is \emph{independent} of $\sigma^2$.
+This means that $\alpha_1-2\gamma x_\theta = \beta_1-2\delta x_\theta$, i.e. $\alpha_1 = \beta_1-2(\delta-\gamma)x_\theta$
+Hence, we have
+\begin{align*}
+f_R(x) = \alpha_0+(\beta_1-2(\delta-\gamma)x_\theta)x-\gamma x^2,
+\end{align*}
+with the value of $\gamma$ and $\alpha_0$ potentially indeterminate.
+However, fixing a plausible $\gamma$ value, from (\ref{eq:intercept}) we have
+\begin{align*}
+\mathbb{E}_{\mu_\theta}[f_R(x)]
+= \alpha_0+(\beta_1-2(\delta-\gamma)x_\theta)x_\theta-\gamma (x_\theta^2+\sigma^2)
+= \beta_0+\beta_1x_\theta-\delta (x_\theta^2+\sigma^2)
+= \mathbb{E}_{\mu_\theta}[f_S(x)]
+\\
+\implies
+\alpha_0-2(\delta-\gamma)x_\theta^2=\beta_0-\delta x_\theta^2-\delta \sigma^2
+\\
+\implies \alpha_0 = \beta_0+(\gamma-\delta)(\sigma^2-x_\theta^2).
+\end{align*}
+Putting the pieces together, we have
+\begin{align*}
+f_R(x) = \beta_0+(\gamma-\delta)(\sigma^2-x_\theta^2)+(\beta_1-2(\delta-\gamma)x_\theta)x-\gamma x^2
+\\
+= \beta_0+\beta_1x-\delta x^2 + \big(-(\gamma-\delta)x^2 	
++(\gamma-\delta)(\sigma^2-x_\theta^2)+2(\gamma-\delta)x_\theta
+\big)
+\\
+= \beta_0+\beta_1x-\delta x^2 + (\gamma-\delta)\big(\sigma^2-(x-x_\theta)^2\big)
+\\
+= f_S(x)+(\gamma-\delta)\big(\sigma^2-(x-x_\theta)^2\big)
+\end{align*}
+
+
+\end{proof}
+
+\sampling*
+\begin{proof}
+Following from Proposition \ref{prop:reduction}, let $\theta = [\underline{\delta}_\theta,\overline{\delta}_\theta]$.
+Suppose $\theta^\circ \neq \emptyset$ and $\delta \in \theta^\circ$.
+Then (\ref{eq:gamma}) is necessarily satisfied, and $\phi(f_S;\theta,\mu_\theta) = \{f_S\}$.
+However, if $\delta = \underline{\delta}_\theta$ or $\overline{\delta}_\theta$, then $(\ref{eq:gamma})$ is a corner solution from the receiver's perspective.
+If $\delta =  \overline{\delta}_\theta$, then any $\gamma \geq \overline{\delta}_\theta$ is plausible from the receiver's perspective.
+If $\delta = \underline{\delta}_\theta$, any $\gamma \leq \underline{\delta}_\theta$ is plausible.
+Finally, if $\underline{\delta}_\theta=\overline{\delta}_\theta$, any $\gamma \in [0,\overline{\gamma}]$ value is possible.
+This pins down the plausible set of $\gamma$ values from the receiver's perspective.
+
+Next, fix $\sigma$.
+The receiver chooses $x$ to maximize:
+\begin{align}
+\beta_0+\beta_1 x -\delta x^2 + \big(\mathbb{E}_\gamma^R[\gamma|\delta]-\delta)\big(\sigma^2-(x-x_\theta)^2\big)
+\label{eq:theorem1obj}
+\end{align}
+The receiver's choice is given by $x^* = x_\theta +\frac{\beta_1-2\delta x_\theta}{2\mathbb{E}_\gamma^R[\gamma|\delta]}$. Write $x^* = x_\theta+h$. In this case, her expected value is:
+\begin{align}
+\beta_0+\beta_1 x^*-\delta (x^*)^2
++\big(\mathbb{E}_\gamma^R[\gamma|\delta]-\delta\big)\big(\sigma^2-(x^*-x_\theta)^2\big)
+\notag
+\\
+\beta_0+\beta_1 (x_\theta+h)-\delta (x_\theta^2+2x_\theta h + h^2)
++\big(\mathbb{E}_\gamma^R[\gamma|\delta]-\delta\big)\sigma^2
+-\mathbb{E}_\gamma^R[\gamma|\delta] h^2
++ \delta h^2
+\notag
+\\
+\beta_0+\beta_1 (x_\theta+h)-\delta (x_\theta^2+2x_\theta h)
++\big(\mathbb{E}_\gamma^R[\gamma|\delta]-\delta\big)\sigma^2
+-\mathbb{E}_\gamma^R[\gamma|\delta] h^2
+\notag
+\\
+\beta_0+\beta_1 x_\theta -\delta x_\theta^2 + (\beta_1 - 2\delta x_\theta)h
++\big(\mathbb{E}_\gamma^R[\gamma|\delta]-\delta\big)\sigma^2
+-\mathbb{E}_\gamma^R[\gamma|\delta] h^2
+\notag
+\\
+\beta_0+\beta_1 x_\theta -\delta x_\theta^2
++ \frac{(\beta_1-2\delta x_\theta)^2}{2\mathbb{E}_\gamma^R[\gamma|\delta]}
+-\frac{(\beta_1-2\delta x_\theta)^2}{4\mathbb{E}_\gamma^R[\gamma|\delta]}
++\big(\mathbb{E}_\gamma^R[\gamma|\delta]-\delta\big)\sigma^2
+\notag
+\\
+\beta_0+\beta_1 x_\theta -\delta x_\theta^2
++ \frac{(\beta_1-2\delta x_\theta)^2}{4\mathbb{E}_\gamma^R[\gamma|\delta]}
++\big(\mathbb{E}_\gamma^R[\gamma|\delta]-\delta\big)\sigma^2
+\label{eq:theorem1ev}
+\end{align}
+Suppose $\delta \in \theta^\circ$. Then, $\mathbb{E}_\gamma^R[\gamma|\delta] = \delta$, and the receiver's expected value does not depend on $\sigma^2$.
+If $\delta = \overline{\delta}_\theta$, her expected utility is
+\begin{align*}
+\beta_0+\beta_1 x_\theta-\delta x_\theta^2+\frac{(\beta_1-2\delta x_\theta)^2}{4\overline{\gamma}_\theta}	+(\overline{\gamma}_\theta-\delta)\sigma^2,
+\end{align*}
+recalling that $\overline{\gamma}_\theta=\mathbb{E}_\gamma^R[\gamma|\gamma \geq \overline{\delta}_\theta]$.
+Similarly, we have that if $\delta = \underline{\delta}_\theta$, her expected utility is
+\begin{align*}
+\beta_0+\beta_1 x_\theta-\delta x_\theta^2+\frac{(\beta_1-2\delta x_\theta)^2}{4\underline{\gamma}_\theta}	+(\underline{\gamma}_\theta-\delta)\sigma^2.	
+\end{align*}
+%Since $\overline{\gamma}_\theta \geq \delta \geq \underline{\gamma}_\theta$,
+Note that because the receiver has a flat prior over $\alpha_0$, her posterior places the same mass on all models that are the same ``up to a constant.''
+Working backwards, $S$ then chooses $\sigma^2$ to maximize
+\begin{align*}
+P_\delta^\theta(\{\overline{\delta}_\theta\})
+\bigg(\frac{\mathbb{E}_\gamma^R[(\beta_1-2\delta x_\theta)^2]}{4\overline{\gamma}_\theta}	+(\overline{\gamma}_\theta-\overline{\delta}_\theta)\sigma^2
+\bigg)
++
+P_\delta^\theta(\{\underline{\delta}_\theta\})
+\bigg(\frac{\mathbb{E}_\gamma^R[(\beta_1-2\delta x_\theta)^2]}{4\underline{\gamma}_\theta}	+(\underline{\gamma}_\theta-\underline{\delta}_\theta)\sigma^2
+\bigg).
+\end{align*}
+The derivative with respect to $\sigma^2$ is simply
+\begin{align*}
+P_\delta^\theta(\{\overline{\delta}_\theta\})(\overline{\gamma}_\theta-\overline{\delta}_\theta)
+-P_\delta^\theta(\{\underline{\delta}_\theta\})(\underline{\delta}_\theta-\underline{\gamma}_\theta).
+\end{align*}
+If the first term is greater than the second, the optimal choice is $\sigma = \overline{\sigma}$. Otherwise, $\sigma = \underline{\sigma}$.
+Finally, in the case where $\theta$ is degenerate and equal to $\{\delta\}$, the preference for distant sampling reduces to $\mathbb{E}_\gamma^R[\gamma] - \delta \geq 0$.
+This gives the result for sampling.
+
+Finally, we characterize the equilibrium value of $x_\theta$.
+Returning to (\ref{eq:theorem1obj}) and using the envelope theorem, we have that the derivative with respect to $x_\theta$ is:
+\begin{align*}
+2\big(\mathbb{E}_\gamma^R[\gamma|\delta]-\delta\big)(x^*-x_\theta)
+\propto (\mathbb{E}_\gamma^R[\gamma|\delta]-\delta)\frac{\beta_1-2\delta x_\theta}{\mathbb{E}_\gamma^R[\gamma|\delta]}.
+\end{align*}
+This is (strictly) concave if $\mathbb{E}_\gamma^R[\gamma|\delta]-\delta > 0$, and achieves a maximum when $\beta_1 = 2\delta x_\theta$.
+Given $S$ must commit to $R$ beforehand and integrating backwards, this gives $x_\theta = \frac{\mathbb{E}_{\beta_1}^\theta[\beta_1]}{2\mathbb{E}_\gamma^\theta[\gamma]}$ under tradeoff underestimatement.
+Otherwise, if $\mathbb{E}_\gamma^R[\gamma|\delta]-\delta \leq 0$, the function is convex and achieves a maximum at a corner solution $\underline{x}$ or $\overline{x}$, giving the potential values for $x_\theta$.
+
+\end{proof}
+
+\valueinfo*
+\begin{proof}
+Recall that given a sender model $f_S^\theta(x) = \beta_0+\beta_1x - \delta x^2$, each of $R$'s plausible models can be written as:
+\begin{align*}
+f_R(x) = f_S^\theta(x)+ (\gamma-\delta)\big(\sigma_\theta^2-(x-x_\theta)^2\big),
+\end{align*}
+where there is residual uncertainty about the value of $\gamma$.
+Throught this proof, with some abuse of notation, we use $\mathbb{E}$ to refer to $R$'s expectations.
+
+First, in the absence of information, $R$ chooses $x^*$ to maximize
+\begin{align*}
+\mathbb{E}[\alpha_0]+\mathbb{E}[\alpha_1]x-\mathbb{E}[\gamma]x^2
+\implies
+x^* = \frac{\mathbb{E}[\alpha_1]}{2\mathbb{E}[\gamma]}
+\end{align*}
+which gives an expected value of $\mathbb{E}[\alpha_0]+\frac{\mathbb{E}[\alpha_1]^2}{4\mathbb{E}[\gamma]}$.
+
+First, suppose $\theta = [\underline{\delta}_\theta,\overline{\delta}_\theta]$ is nondegenerate. If $\delta \in \theta^\circ$, then $f_R(x) = f_S^\theta(x)$ and the value of information is
+\begin{align*}
+\mathbb{E}\bigg[\frac{\alpha_1^2}{4\gamma}	\bigg]
+-
+\frac{\mathbb{E}[\alpha_1]^2}{4\mathbb{E}[\gamma]}.
+\end{align*}
+However, suppose there is uncertainty about the value of $\gamma$. From the (\ref{eq:theorem1ev}), $R$'s conditional expected value is:
+\begin{align*}
+\beta_0+\beta_1 x_\theta -\delta x_\theta^2
++ \frac{(\beta_1-2\delta x_\theta)^2}{4\mathbb{E}[\gamma|\delta]}
++\big(\mathbb{E}[\gamma|\delta]-\delta\big)\sigma^2.	
+\end{align*}
+Recalling that $\beta_1-2\delta x_\theta = \alpha_1-2\gamma x_\theta$, this can be rewritten as
+\begin{align*}
+\beta_0+\big(\mathbb{E}[\gamma|\delta]-\delta\big)\sigma^2
++\big(\alpha_1-2(\mathbb{E}[\gamma|\delta] -\delta)x_\theta) x_\theta -\delta x_\theta^2
++ \frac{(\alpha_1-2\mathbb{E}[\gamma|\delta] x_\theta)^2}{4\mathbb{E}[\gamma|\delta]}
+\\
+=
+\beta_0+\big(\mathbb{E}[\gamma|\delta]-\delta\big)\sigma^2
++\alpha_1 x_\theta
+-2\mathbb{E}[\gamma|\delta]x_\theta^2
++\delta x_\theta^2
++ \frac{\alpha_1^2}{4\mathbb{E}[\gamma|\delta]}
+-\alpha_1 x_\theta
++\mathbb{E}[\gamma|\delta]x_\theta^2
+\\
+=
+\beta_0+\big(\mathbb{E}[\gamma|\delta]-\delta\big)\sigma^2
++(\delta-\mathbb{E}[\gamma|\delta])x_\theta^2+\frac{\alpha_1^2}{4\mathbb{E}[\gamma|\delta]}.
+\\
+=
+\overbrace{\beta_0+\big(\mathbb{E}[\gamma|\delta]-\delta\big)(\sigma^2-x_\theta^2)}^{\text{Noisy signal about $\alpha_0$}}
++\frac{\alpha_1^2}{4\mathbb{E}[\gamma|\delta]}.	
+\end{align*}
+
+Note that because the first term is a constant and $R$ is risk neutral in $y$, it does not affect the value of information for her.
+Thus, we are only left to consider the latter two terms.
+The non-$\alpha_0$ set of terms take the following values:
+\begin{align*}
+&\frac{\alpha_1^2}{4\gamma}
+\text{ for } \gamma \in (\underline{\delta}_\theta,\overline{\delta}_\theta).
+\qquad
+\frac{\alpha_1^2}{4\overline{\gamma}_\theta}
+\text{ for } \gamma \geq \overline{\delta}_\theta,
+\qquad \frac{\alpha_1^2}{4\underline{\gamma}_\theta}
+\text{ for } \gamma \leq \underline{\delta}_\theta.
+\end{align*}
+Defining $q(\gamma,\theta)$ as in the statement of the proposition, integrating over $\alpha_1,\gamma$, and then integrating again over the type space $\Theta$ gives the result.
+\end{proof}
+
+\forecast*
+\begin{proof}
+With some abuse of notation, let $x^*$ maximize $\mathbb{E}[y|x]$ for $R$. Given the sender's model, the receiver's only uncertainty is over $\gamma$. This means that
+\begin{align*}
+\Var(y|x^*)
+= 	
+\begin{cases}
+	0 & \gamma = \delta \in (\underline{\delta}_\theta,\overline{\delta}_\theta)
+	\\
+	\Var_{\gamma \geq \overline{\delta}_\theta} \big((\frac{\alpha_1^2}{4\gamma}+(\gamma-\overline{\delta}_\theta)(\sigma^2-x_\theta^2)\big) & \gamma \geq \overline{\delta}_\theta
+	\\
+	\Var_{\gamma \leq \underline{\delta}_\theta} \big((\frac{\alpha_1^2}{4\gamma}+(\gamma-\overline{\delta}_\theta)(\sigma^2-x_\theta^2)\big) & \gamma \leq \underline{\delta}_\theta	
+\end{cases}
+\end{align*}
+In the case where $\gamma \geq \overline{\delta}_\theta$, this can be simplified as
+\begin{align*}
+\frac{\alpha_1^4}{16}\Var
+\big(\frac{1}{\gamma}\big)+(\sigma^2-x_\theta^2)^2\Var(\gamma),
+\end{align*}
+which is increasing in $\sigma$ as long as $\sigma^2 \geq x_\theta^2$
+A similar condition holds for the case where $\gamma \leq \underline{\delta}_\theta$.
+This gives the first part of the result.
+
+We now turn to the second and third part of the results. Recall that:
+\begin{align*}
+f_R(x) = f_S(x)+(\gamma-\delta)(\sigma^2-(x-x_\theta)^2)
+\implies
+\Var(y|x)
+=\big(\sigma^2-(x-x_\theta)^2\big)^2\Var(\gamma|\delta).
+\end{align*}
+Using this, $R$'s objective can be written as
+\begin{align}
+V^F(f_S|\theta,\sigma) =\max_x 	(1-\psi)\big(f_S(x)
++(\mathbb{E}[\gamma|\delta]-\delta)(\sigma^2-(x-x_\theta)^2)\big)
+-\psi\big(\sigma^2-(x-x_\theta)^2\big)^2\Var(\gamma|\delta)
+\label{eq:varianceobj}
+\end{align}
+As above, the $1-\psi$ terms corresponding to $\mathbb{E}[y|x]$ are maximized at $x^\dag = x_\theta +\frac{\beta_1-2\delta x_\theta}{2\mathbb{E}[\gamma|\delta]}$.
+The $\psi$ term corresponding to $\Var(y|x)$ is minimized when $x = x_\theta \pm \sigma$.
+Increase $\sigma$ large enough so that $x^\dag \in (x_\theta-\sigma,x_\theta+\sigma)$.
+Then, the optimal $x$ trades off between setting the derivative of the $\psi$ terms equal to $0$and the $(1-\psi)$ terms equal to $0$.
+Crucially, if $\frac{\beta_1-2\delta x_\theta}{2\mathbb{E}[\gamma|\delta]} = \sigma$, and $(x_\theta -x^*)=\sigma^2$, there is no tradeoff.
+As $\sigma$ grows arbitrarily large, $x^*$ moves further away from $x^\dag$ and closer to $x_\theta \pm \sigma$.
+
+Next, applying the envelope theorem to (\ref{eq:varianceobj}) with respect to $\sigma^2$ gives
+\begin{align}
+(1-\psi)(\mathbb{E}[\gamma|\delta]-\delta)+2\psi [(x^*-x_\theta)^2-\sigma^2]\Var(\gamma|\delta)
+\label{eq:forecastenvelope}
+\end{align}
+Denoting the maximand of (\ref{eq:varianceobj}) by $x^*$, using the envelope theorem, the derivative of $V^F$ with respect to $\sigma^2$ is
+\begin{align}
+(1-\psi)(\mathbb{E}[\gamma|\delta]-\delta)+2\psi [(x^*-x_\theta)^2-\sigma^2]\Var(\gamma|\delta)
+\label{eq:forecastenvelope}
+\end{align}
+%If $\delta \in \theta^\circ$, (\ref{eq:forecastenvelope}) is $0$.
+%It is $\leq 0$ if and only if
+%\begin{align*}
+%\sigma^2 - (x^*-x_\theta)^2 \geq \frac{(1-\psi)(\mathbb{E}[\gamma|\delta]-\delta)}{2\psi \Var(\gamma|\delta)}.
+%\end{align*}
+Returning to (\ref{eq:varianceobj}) and differentiating with respect to $x$, $x^*$ is defined by
+\begin{align*}
+(1-\psi)\big(\beta_1 	-2\delta x^*-2(\mathbb{E}[\gamma|\delta]-\delta)(x^*-x_\theta)\big)
++ 4\psi \Var(\gamma|\delta)(x^*-x_\theta)\big(\sigma^2-(x^*-x_\theta)^2\big)
+= 0
+\\
+\implies
+\sigma^2-(x^*-x_\theta)^2=\frac{(1-\psi)\big(2(\mathbb{E}[\gamma|\delta]-\delta)(x^*-x_\theta)+2\delta x^*-\beta_1\big)}{4\psi \Var(\gamma|\delta)(x^*-x_\theta)}
+\end{align*}
+in the case where $x^* \neq x_\theta$.
+This means (\ref{eq:forecastenvelope}) is $\geq 0$ if and only if
+\begin{align*}
+(1-\psi)(\mathbb{E}[\gamma|\delta]-\delta) \geq 2\psi [\frac{(1-\psi)\big(2(\mathbb{E}[\gamma|\delta]-\delta)(x^*-x_\theta)+2\delta x^*-\beta_1\big)}{4\psi \Var(\gamma|\delta)(x^*-x_\theta)}]\Var(\gamma|\delta)
+\\
+(1-\psi)(\mathbb{E}[\gamma|\delta]-\delta) \geq 
+(1-\psi)(\mathbb{E}[\gamma|\delta]-\delta)+\psi\frac{2\delta x^*-\beta_1}{x^*-x_\theta}
+\\
+\frac{\beta_1-2\delta x^*}{x^*-x_\theta} \geq 0.
+\end{align*}
+This expression allows us to derive the final two results.
+First, if $x^\dag \geq x_\theta$, then $x^*$ is between $x^\dag$ and $x_\theta+\sigma$, and is further attracted to the latter point as $\sigma$ grows arbitrarily large.
+In this case, since $\delta > 0$, $f_S'(x^*) = \beta_1-2\delta x^* < 0$.
+A similar argument applies when $x^\dag < x_\theta$.
+Thus, for $\sigma$ arbitrarily large, $V^F$ is decreasing in $\sigma$.
+This gives the second result.
+
+For the third result, consider $\sigma \approx 0$.
+Suppose $\beta_1-2\delta x_\theta = 0$; this means that $x^\dag = x_\theta$.
+Hence, for any $\sigma \geq 0$, $x^*$ lies weakly between $x_\theta$ and $x_\theta+\sigma$ (strictly if $\sigma > 0$).
+Since $\beta_1-2\delta x_\theta = 0$, we have $\beta_1-2\delta x^*<0$, which means $V^F$ is decreasing in $\sigma$.\footnote{$x^*$ also has a symmetric solution that lies between $x_\theta$ and $x_\theta-\sigma$, in which case the logic is exactly the same.}
+
+
+Finally, consider again $\sigma \approx 0$ and suppose $\beta_1-2\delta x_\theta > 0$.
+Note that this implies $x^\dag > x_\theta$.
+However, as $\psi \to 1$, $x^* \to x_\theta$.
+Since $\beta_1-2\delta x_\theta> 0$, this implies that for $\psi$ large, $\beta_1-2\delta x^* > 0$, as well, meaning the derivative is positive.
+An analogous argument applies when $\beta_1-2\delta x_\theta < 0$.
+In either case, $V^F$ is increasing in $\sigma$ for $\sigma$ small and $\beta_1-2\delta x_\theta \neq 0$.
+\end{proof}
+
+\samplinggeneral*
+We prove this result via the following lemmata. The first part of the Theorem (assuming Assumption \ref{assfunction1}) follows immediately from the first lemma after applying the same reasoning as in Theorem \ref{thm:sampling}. 
+
+%LEMMATA HERE
+
+\begin{lemma}
+Suppose Assumption \ref{assfunction1} holds and fix $f_S$.
+Then, for all $f_R \in \phi(f_S;\theta,\mu_\theta)$, there exists $L(\sigma)$ strictly increasing in $\sigma$ with $L(0) = 0$ such that:
+\begin{align*}
+f_R(x) = f_S(x)+(\gamma-\delta)\big[L(\sigma)-\ell(x-x_\theta)\big).
+\end{align*}
+\end{lemma}
+\begin{proof}
+Suppose $f_R \in \phi(f_S;\theta,\mu_\theta)$ for $f_S = \beta_0+\beta_1x-\delta\ell(x-x_\theta)$.
+This means that we have
+\begin{align*}
+f_R(x) = \tilde{\alpha}_0 + \tilde{\alpha}_1 x-\gamma\ell(x-x_\theta).
+\end{align*}
+Applying Stein's Lemma as above, the moment condition with respect to $\tilde{\alpha}_1$ can be written as
+\begin{align*}
+\mathbb{E}_{\mu_\theta}\big[x\big(f_R(x)-f_S(x) \big)\big]
+&= \Cov_{\mu_\theta}(x,f_R(x)-f_S(x))
+\\
+&=
+\sigma^2 \mathbb{E}_{\mu_\theta}[f_R'(x)-f_S'(x)]
+\\
+&=
+\sigma^2 \mathbb{E}_{\mu_\theta}[\tilde{\alpha}_1-\gamma\ell'(x-x_\theta)-\beta_1+\delta\ell'(x-x_\theta)]
+= 0.
+\end{align*}
+Beause $\ell(x-x_\theta)$ is symmetric around $x_\theta$, the terms with $\ell'$ are equal to $0$.
+Thus, we have $\tilde{\alpha}_1 = \beta_1$ for all $\sigma$ and are left to solve for $\tilde{\alpha}_0$.
+But for each $\gamma$ value, as above, we have
+\begin{align*}
+\mathbb{E}_{\mu_\theta}[f_R(x)]=\mathbb{E}_{\mu_\theta}[f_R(x)]
+\implies
+\tilde{\alpha}_0 - \gamma\mathbb{E}_{\mu_\theta,\sigma}[\ell(x-x_\theta)]
+= \beta_0 - \delta\mathbb{E}_{\mu_\theta,\sigma}[\ell(x-x_\theta)]
+\\
+\implies
+\tilde{\alpha}_0 = \beta_0 + (\gamma-\delta)\mathbb{E}_{\mu_\theta,\sigma}[\ell(x-x_\theta)].
+\end{align*}
+Defining $L(\sigma) = \mathbb{E}_{\mu_\theta,\sigma}[\ell(x-x_\theta)]$, we note because $\ell(x-x_\theta)$ is convex, $L(\sigma)$ is increasing in $\sigma$. As $\sigma \to 0$, $L(\sigma) \to 0$.
+This gives the result.	
+\end{proof}
+
+\begin{lemma}
+Suppose Assumption \ref{assfunction2} holds and fix $f_S$.
+Then, for each $f_R \in \phi(f_s; \theta,\mu_\theta)$, $f_R(x_\theta)$ is increasing (decreasing).
+\end{lemma}	
+\begin{proof}
+As above, we write $
+f_R(x) = \tilde{\alpha}_0 + \tilde{\alpha}_1 x-\gamma m(x)$.
+Applying Stein's Lemma again to the slope moment condition, we have $\mathbb{E}_{\mu_\theta}[f_R'(x)]=\mathbb{E}_{\mu_\theta}[f_R'(x)]$.
+Using this condition, we implicitly define $\alpha_1(\sigma)$ as
+\begin{align*}
+\alpha_1(\sigma) = \beta_1 +(\gamma-\delta)\mathbb{E}_{\mu_\theta}[m'(x)] 		
+\end{align*}
+and note that its sign with respect to $\sigma$ is ambiguous.
+Similarly, we define $\alpha_0(\sigma)$ implicitly as
+\begin{align*}
+\alpha_0(\sigma)
+= \beta_0 + \big(\beta_1- \alpha_1(\sigma)\big)x_\theta+(\gamma-\delta)\mathbb{E}_{\mu_\theta,\sigma}[m(x)]
+\end{align*}
+and note in particular that, by definition, we have
+\begin{align*}
+\mathbb{E}_{\mu_\theta,\sigma}[f_S(x)]=
+\mathbb{E}_{\mu_\theta,\sigma}[f_R(x)]
+=\mathbb{E}_{\mu_\theta,\sigma}\big[\alpha_0(\sigma)x +\alpha_1(\sigma)
+-\gamma m(x)
+\big]
+\end{align*}
+But then, by the envelope theorem, we have that
+\begin{align*}
+\frac{\partial}{\partial \sigma}
+f_R(x_\theta|\sigma)
+&= \alpha_0'(\sigma)+\alpha_1'(\sigma)x_\theta
+- \gamma m(x_\theta)
+\\
+&=	-\alpha_1'(\sigma)x_\theta+(\gamma-\delta)\frac{\partial}{\partial \sigma}\mathbb{E}_{\mu_\theta,\sigma}[m(x)]+\alpha_1'(\sigma)x_\theta
+\\
+&= (\gamma-\delta)\frac{\partial}{\partial \sigma}\mathbb{E}_{\mu_\theta,\sigma}[m(x)]
+\end{align*}
+Since $m$ is convex, this is weakly positive if and only if $\gamma \geq \delta$.
+Moreover, as $\sigma \to \infty$, $\mathbb{E}_{\mu_\theta,\sigma}[m(x)]$ is bounded away from $0$, meaning that $f_R(x_\theta)$ approaches $\infty$ as $\sigma \to \infty$.
+
+We note that because the receiver has a flat prior over $\alpha_0$, her posterior places the same mass on all models that are the same ``up to a constant and linear term,'' i.e. $\alpha_1(\sigma)$.
+This means that for $\gamma > \delta$, there exists $\sigma$ such that $f_R(x_\theta|\sigma) > f_R(x^*|\underline{\sigma})$, where $x^*$ maximizes $f_R(x|\underline{\sigma})$.
+Hence, $S$ is better off being a generalist than a specialist when $\gamma > \delta$.
+The same logic shows that $S$ prefers being a specialist when $\gamma < \delta$.
+Applying the same logic as in the proof of Theorem $\ref{thm:sampling}$ gives the result.
+\end{proof}
+
+\reductionmulti*
+\begin{proof}
+As above, we necessarily the following moment conditions for all $i$:
+\begin{align*}
+\mathbb{E}_{\mu_\theta}\big[x_i\big(f_R(x)-f_S(x)\big)\big] = 0 \qquad
+\mathbb{E}_{\mu_\theta}\big[f_R(x)-f_S(x)\big] = 0
+\end{align*}
+and we may or may not have the correct moment condition with respect to the entries of $\gamma$. 
+Crucially, however, because $\mu_\theta$ is elliptical by Stein's Lamma for elliptical random vectors \citep{landsman2008stein}, we can simply the first equation to
+\begin{align*}
+\mathbb{E}_{\mu_\theta}\big[x_i\big(f_R(x)-f_S(x)\big)\big] = 0
+&\implies
+\mathbb{E}_{\mu_\theta}\big[\frac{\partial}{\partial x_i}f_R(x)\big]
+=
+\mathbb{E}_{\mu_\theta}\big[\frac{\partial}{\partial x_i}f_S(x)\big] \qquad \forall i
+\\
+&\implies
+\alpha - (\gamma+\gamma')\mathbb{E}_{\mu_\theta}[x]
+=
+\beta - (\delta+\delta')\mathbb{E}_{\mu_\theta}[x]
+\\
+&\implies
+\alpha = \beta + \big((\gamma+\gamma')-(\delta+\delta')\big)x_\theta
+\\
+&\implies
+\alpha'x = \beta'x + x_\theta'\big((\gamma+\gamma')-(\delta+\delta')\big)x
+\end{align*}
+which is invariant to $\Sigma_\theta$.
+Next, working with the second equation, we have
+\begin{align*}
+\mathbb{E}_{\mu_\theta}\big[f_R(x)]
+= \alpha_0 + \alpha x_\theta -\big(x_\theta + \Sigma_\theta^{\frac{1}{2}} \epsilon\big)'\gamma \big(x_\theta + \Sigma_\theta^{\frac{1}{2}} \epsilon\big)
+= \beta_0 + \beta x_\theta -\big(x_\theta + \Sigma_\theta^{\frac{1}{2}} \epsilon\big)'\delta \big(x_\theta + \Sigma_\theta^{\frac{1}{2}} \epsilon\big)
+=
+\mathbb{E}_{\mu_\theta}\big[f_S(x)].
+\end{align*}
+Note that
+\begin{align*}
+\big(x_\theta + \Sigma_\theta^{\frac{1}{2}} \epsilon\big)'\gamma \big(x_\theta + \Sigma_\theta^{\frac{1}{2}} \epsilon\big)
+= x_\theta'\gamma x_\theta + 2x_\theta'\gamma\Sigma_\theta^{\frac{1}{2}} \epsilon + \Sigma_\theta^{\frac{1}{2}}\epsilon'\gamma\Sigma_\theta^{\frac{1}{2}}\epsilon	
+\end{align*}
+and taking the expectation with respect to $\epsilon$ thus gives
+\begin{align*}
+x_\theta'\gamma x_\theta + \trace{(\gamma\Sigma_\theta)}	.
+\end{align*}
+Utilizing the same logic with $\delta$ and plugging in the $\alpha$ equation gives
+\begin{align*}
+\alpha_0=\beta_0+(\beta-\alpha)x_\theta + 	x_\theta'(\gamma-\delta) x_\theta + \trace{((\gamma-\delta)\Sigma_\theta)}	
+\\
+= \beta_0-x_\theta'\big((\gamma+\gamma')-(\delta+\delta')\big)x_\theta + \trace{((\gamma-\delta)\Sigma_\theta)}	
+\\
+= \beta_0-x_\theta'(\gamma-\delta)x_\theta + \trace{((\gamma-\delta)\Sigma_\theta)}
+\end{align*}
+Hence, we renormalize $f_R$, plug in the values of $\alpha_0,\alpha$, and reorganize the quadratic terms to get:
+\begin{align*}
+f_R(x)
+&= \alpha_0 + \alpha' x - x'\gamma x
+\\
+&= \beta_0-x_\theta'(\gamma-\delta)x_\theta + \trace{((\gamma-\delta)\Sigma_\theta)}
++\beta'x + x_\theta'\big((\gamma+\gamma')-(\delta+\delta')\big)x- x'\gamma x
+\\
+&= \beta_0+\beta'x + \trace{((\gamma-\delta)\Sigma_\theta)} - (x-x_\theta)'(\gamma-\delta)(x-x_\theta).
+\end{align*}
+
+\end{proof}
+
+\samplingmulti*
+\begin{proof}
+The proof of this result follows nearly identically to that of Theorem \ref{thm:sampling}.
+The key is that
+\begin{align*}
+\mathbb{E}_R^\gamma\big[\trace\big((\gamma-\delta)\Sigma_\theta\big)\big|\delta,\theta\big]
+=\mathbb{E}_R^\gamma\bigg[\sum_{i=1}^n (\gamma_{ii}-\delta_{ii})\Sigma_{ii,\theta} +\sum_{i<j} \big[(\gamma_{ij}+\gamma_{ji})-(\delta_{ij}+\delta_{ji})\big]\Sigma_{ij,\theta}\big|\delta,\theta\bigg]
+\\
+=\mathbb{E}_R^\gamma\bigg[\sum_{i=1}^n \Delta_{ii}(\delta)\Sigma_{ii,\theta} +\sum_{i<j} \big[\Delta_{ij}(\delta)+\Delta_{ji}(\delta)\big]\Sigma_{ij,\theta}\big|\delta,\theta\bigg]
+\end{align*}
+which generates corner solution depending on the expected signs of $\Delta_{ii}$ and $\Delta_{ij}+\Delta_{ji}$.
+\end{proof}
+
+
+
+
+
+\simplegain*
+\begin{proof}
+First, we show how the receiver's expected value from entertaining models that have steeper or shallower tradeoffs than the sender's affect her maximal expected utility.
+Suppose $\gamma > \delta$. 
+Given a sampling strategy $\sigma$, we have:
+\begin{align*}
+\max \beta_0+\beta_1x-\delta (x-x_\theta)^2 = \beta_0+\beta_1	x_\theta +\frac{\beta_1^2}{4\delta}
+\\
+\max \beta_0+\beta_1x-\gamma (x-x_\theta)^2 + (\gamma-\delta)\sigma^2 = \beta_0+\beta_1	x_\theta +\frac{\beta_1^2}{4\gamma}+(\gamma-\delta)\sigma^2.
+\end{align*}
+The latter is greater than the former when
+\begin{align*}
+\frac{\beta_1^2}{4\gamma}+(\gamma-\delta)\sigma^2 \geq \frac{\beta_1^2}{4\delta}	
+\iff
+(\gamma-\delta)\sigma^2 \geq 	\frac{\beta_1^2}{4}\bigg(\frac{1}{\delta}-\frac{1}{\gamma}\bigg)
+\iff
+\sigma^2 \geq \frac{\beta_1^2}{\gamma\delta}.
+\end{align*}
+
+
+
+Now, suppose $\delta \in \theta_i^\circ, \theta_j^\circ$.
+Then, the receiver entertains just the sender's model, which she believes is the sender's (only) model.
+Thus, we consider situations where the boundaries of the sets intersect.
+	
+	
+Next, suppose $\underline{\delta}_i \in \theta_j^\circ$.
+Conditional on seeing $\underline{\delta}_i$, the receiver entertains models with $\gamma \leq \underline{\delta}_i$.
+By Theorem \ref{thm:sampling}, the sender would receive to locally sample in these cases. 
+However, in her initial choice of $\sigma$, the sender is forced to consider both the probability of $\overline{\delta}_i$ and $\underline{\delta}_i$.
+If $\sigma_i = \overline{\sigma}$, the sender is being forced to distantly sample, which delivers a gain most of the time but a loss in the case where $\underline{\delta}_i$ materializes.
+However, if $\underline{\delta}_i \in \theta_j^\circ$, then with some probability, the receiver believes the $\underline{\delta}_i$ model was the true model and came from the type $j$ sender.
+This means the receiver places a higher weight on the sender's model itself, and less on models with lower $\gamma$ values (which, under $\sigma_i=\overline{\sigma}$, deliver lower expected utility).
+
+A similar argument shows that the sender \emph{loses out} when $\delta = \underline{\delta}-i$ and $\sigma_i=\underline{\sigma}$.
+In this case, the sender is (optimally) gaining by herself locally sampling, meaning the remaining models the receiver entertains deliver higher expected utility.
+However, the receiver thinks with positive probability that the sender's model is in fact the \emph{true} model, causing her to relatively downweight these alternative models and focus more weight on the sender's model, which delivers lower expected utility.
+Yet another similar arugment shows that the sender gains (loses) when $\overline{\delta}_i \in \theta_j^\circ$ and $\sigma_i=\underline{\sigma}$ $(\sigma_i = \overline{\sigma})$.
+
+Next, suppose $\delta \in \theta_i^\circ$ and that $\delta = \overline{\delta}_j$.
+If the type $j$ sender is distantly sampling ($\sigma_j = \overline{\sigma}$), the receiver entertains not only type $i$'s model but also models with higher $\gamma$ (since she believes the model could have also come from $\theta_j$).
+The set of models $R$ entertains is thus rosier than if she were to just entertain the type $i$ sender's model, meaning the type $i$ sender benefits from the type $j$'s distant sampling
+Local sampling, on the other hand, would hurt her.
+A similar argument takes cares of the case where $\delta = \underline{\delta}_j$, where the type $\theta_i$ sender is hurt by distant sampling and benefits from local sampling.
+ 
+\end{proof}
+\optimaltype*
+\begin{proof}
+Formal proof under construction, see broad sketches of pieces below.
+
+First we show that the optimal type space contains no non-degenerate intervals.
+Suppose by contradiction that there existed an interval of type $\theta = [\underline{\delta}_\theta,\overline{\delta}_\theta]$ with $\theta \subseteq \Gamma^\circ$.
+Suppose $\theta^\circ \neq \emptyset$ and consider $\delta \in \theta^\circ$.
+Conditional on seeing this model, the sender believes a model of the form $f_S(x) = \beta_0+\beta_1x-\delta x^2$ is the unique model.
+
+Now, for each each $\delta \in \theta^\circ$, $D$ can create a type $\{\delta\}$.
+This type strategically samples by setting $\sigma$ such that $\max_x f_S(x) \leq \max_x f_S(x) + (\mathbb{E}[\gamma|\delta])(\sigma^2-(x-x_\theta)^2)$.
+Thus, conditional on seeing a model of the form $\beta_0+\beta_1x-\delta x^2$, $R$ believes that $f_S(x)$ is either the true model or the model from the $\{\delta\}$ type.
+Let $q(\delta)$ be the conditional probability of the type $\{\delta\}$ sender relative to the original type $\theta$ sender.
+Then, this generates a difference on the order of
+\begin{align*}
+\int_{\underline{\delta}_\theta}^{\overline{\delta}_\theta}
+\max_x f_S(x) + q(\delta)\big(\overline{\gamma}_{\{\delta\}}-\delta\big)(\overline{\sigma}^2-(x-x_\theta)^2)-
+\max_x f_S(x)
+dP_\gamma^D(\delta \leq \mathbb{E}_\gamma^R[\gamma]| \delta \in \theta^\circ)
+\\
++
+\int_{\underline{\delta}_\theta}^{\overline{\delta}_\theta}
+\max_x f_S(x) + q(\delta)\big(\underline{\gamma}_{\{\delta\}}-\delta\big)(\underline{\sigma}^2-(x-x_\theta)^2)-
+\max_x f_S(x)
+dP_\gamma^D(\delta > \mathbb{E}_\gamma^R[\gamma]| \delta \in \theta^\circ)
+\end{align*}
+The first line considers any arbitrary senders who distantly sample.
+The second line considers any arbitrary senders who locally sample.
+In both cases, the gain is positive and is increasing in $q(\delta)$; i.e., the gain is higher the more likely $R$ is to think that $f_S(x)$ came from type $\{\delta\}$.
+
+We are left to consider the boundary types of $\theta$: $\overline{\delta}_\theta$ and $\underline{\delta}_\theta$.
+Since $\theta$ eitehr locally or distantly samples, by Proposition \ref{prop:simplegain} one of $\overline{\delta}_\theta$ or $\underline{\delta}_\theta$ gains and one loses from the existence of an arbitrary type.
+However, because these singletons have measure $0$ in the prior, replacing each with an arbitrary type has no effect on expected utility.
+Thus, the optimal type space contains no intervals, and is only composed of singletons.
+By the first part of the result, this set of singletons must cover all of $\Gamma$, meaning $\Theta = \{\{\delta\} : \delta \in \Gamma\}$ is the optimal set of types.
+Returning to $D$'s ex-ante utility, $S$ chooses the density of each $\{\delta\}$ to be precisely the density in the prior. 
+\end{proof}
+
+\optimaltypediscrete*
+\begin{proof}
+Formal proof under construction. Sketch is as follows.
+The logic for the proof with discrete types is largely the same, except that we have type pooling.
+Consider two $\gamma_i$ values such that $\gamma_i,\gamma_{i+1}$	 are next to each other. We either under or overestimate tradeoffs (suppose wlog that we overestimate).
+This generates a ``loss'' from $\gamma_i$ and a ``gain'' for $\gamma_{i+1}$.
+This ensures we only entertain models with $\gamma \leq \gamma_{i+1}$ instead of $\gamma \neq \gamma_{i+1}$ (which are still on average ``above'' $\gamma$, just by less.
+If the weight on $\gamma_{i}$ grows vanishingly small, it's optimal to pool these two together.
+
+To see that pooling involves at most two types, note that if there were three types, the ``middle'' type would always be the true model if it realized.
+So we are better off either pooling two together and ``breaking out'' the third or breaking out all three.
+
+\end{proof}
+
+
+
+
+\end{appendix}
+
+
+
+\end{document}
