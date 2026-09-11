@@ -69,7 +69,7 @@
 \textbf{\href{https://hassansayedecon.github.io/hassan-sayed.com/SimpleModels.pdf}{Click here}} for latest version of paper.}
 \author{Hassan Sayed
 \thanks{\href{mailto:hsayed@cgdev.org}{hsayed@cgdev.org}, Postdoctoral Scholar, Market Shaping Accelerator.
-I would like to thank Pietro Ortoleva, Xiaosheng Mu, Erzo Luttmer; and participants at the $37^{th}$ Stony Brook Game Theory Conference and the Center for Global Development for productive discussions and feedback.
+I would like to thank Pietro Ortoleva, Xiaosheng Mu, Chris Snyder, Erzo Luttmer; and participants at the $37^{th}$ Stony Brook Game Theory Conference and the Center for Global Development for productive discussions and feedback.
 }
 }
 
@@ -81,12 +81,14 @@ I would like to thank Pietro Ortoleva, Xiaosheng Mu, Erzo Luttmer; and participa
 Many real-world decisions are informed by external data collection and modeling: consultants provide clients ``if-then'' scenarios, portfolio managers present models of stock returns, and AI chatbots offer recommendations based on internal data.
 I study how strategic data collection and model simplification create frictions in these settings. 
 A sender collects data and estimates a model that helps a receiver make a choice.
-The sender may estimate an ``optimistic'' model that neglects tradeoffs the receiver finds important, or a ``pessimistic'' model that exaggerates them.
+The sender may estimate an ``optimistic'' model that neglects some tradeoffs the receiver finds important, or a ``pessimistic'' model that exaggerates them.
 I show that senders who estimate optimistic models strategically gather data as ``generalists'' across a wide array of potentially irrelevant choices, while those who estimate pessimistic models gather data as ``specialists'' about a small set of localized choices.
 The receiver's choices are less accurate when she receives a model from a generalist.
-When choices are multivariate, the sender gains by sampling data where different variables are as highly correlated or anticorrelated as possible.
-Strategic data sampling in turn generates gains from artificial \emph{model simplification}: the sender gains more if the receiver believes his model was oversimplified to be optimistic or pessimistic, and gains the most if she believes the sender's model was calibrated to arbitrary parameters.
-Contracting multiple senders generates full learning if their costs of model provision are low, but requires purchasing multiple models and may be accompanied by an increase in prices.
+When choices are multivariate, the sender gains from sampling data so that different variables are as collinear as possible.
+These effects generate gains from \emph{model simplification}: a sender who provides the true model gains if the receiver believes his model was oversimplified to be optimistic or pessimistic.
+I show that this gain is maximized when the receiver believes the sender's model was calibrated to arbitrary parameters, and when senders are \emph{polarized} into two groups: ones who either estimate highly optimistic models or highly pessimistic ones. The limiting case of the former corresponds to a linear regression model and the latter a ``worst case'' model.
+
+%Contracting multiple senders generates full learning if their costs of model provision are low, but requires purchasing multiple models and may be accompanied by an increase in prices.
 \end{abstract}
 \end{titlingpage}
 
@@ -102,7 +104,7 @@ This model is valuable because it succinctly describes the effects of the econom
 The economist cannot audit the information underlying the model --- which may include expertise or proprietary data.
 His model could idiosyncratically capture the effects of a small set of tax rates, or combine information about a wide range of taxes.
 Moreover, the economist and scientist may think about \emph{tradeoffs} differently.
-The scientist may \emph{neglect} some of the negative effects of high taxes, such as higher prices or decreased commercial activity
+The scientist may \emph{neglect} some of the negative effects of high taxes, such as higher prices or decreased commercial activity.
 Or, he may assume a worst-case scenario and overweight these tradeoffs.
 \emph{Model simplicity} and \emph{uncertainty about underlying data} thus shape the quality of the sender's recommendations.
 
@@ -120,12 +122,10 @@ A receiver (principal) needs to make a choice and contracts a sender (agent) to 
 The sender gathers data and estimates a \emph{model}: a data-generating process (DGP) mapping actions to outcomes.
 The model may be \emph{optimistic} and neglect tradeoffs the receiver finds important, or \emph{pessimistic} and mechanically exaggerate the effect of those same tradeoffs.
 The receiver does not directly observe the data the sender used to estimate his model.
-
-I address four questions.
 How does the receiver learn about the true DGP?
 What kinds of data does the sender gather?
-Can a sender benefit from supplying models that deliberately neglect or overstate tradeoffs, instead of providing the true model?
-Finally, how are these distortions shaped by \emph{competition} among multiple senders?
+Can one sender benefit if other senders supply models that deliberately neglect or exaggerate tradeoffs and, if so, when is that benefit maximized?
+%Finally, how are these distortions shaped by \emph{competition} among multiple senders?
 
 \paragraph{Model Overview}
 A receiver --- a policymaker, CEO, or voter --- must choose an action $x$ to maximize an outcome $y$ --- such as profits or the value of a public good.
@@ -143,7 +143,7 @@ The sender then fits a model to the data.
 He considers similar models to the receiver, but may model tradeoffs in an oversimplified way.
 He could estimate an ``optimistic'' model that \emph{neglects} costs or losses the receiver considers.
 This could mean he performs a \emph{linear regression} of $y$ on $x$ without considering the nonlinear effects of $x$.
-He could also estimate a ``pessimistic'' model that \emph{exaggerates} tradeoffs and assumes the negative effects of high $x$ are as high as possible.
+He could also estimate a ``pessimistic'' model that consistently \emph{exaggerates} tradeoffs relative to what the receiver finds plausible.
 The sender's objective wants the receiver to believe the maximum value of $y$ he can expect to achieve is as \emph{high as possible} --- because he receives a cut of the receiver's expected profits or would like to maximize her engagement with his services.
 
 
@@ -250,11 +250,10 @@ Most of the paper presents a model where the receiver's payoff $y$ is \emph{quad
 While we assume this functional form for tractability, we also show that the results are robust to the receiver's payoffs being given by a linear benefit less a symmetric, convex loss around a point.
 Although the model without symmetry can prove to be very intractable, we provide a regularity assumption that delivers an analogue of our result: a sender who estimates optimistic models gains more from being a generalist than a specialist, and one who estimates pessimistic models gains more from being a specialist than a generalist.
 
-I also show that the model's results deliver indetical results with \emph{multidimensional choices} --- i.e., when a receiver chooses $x = (x_1,\ldots,x_n)$.
-Multidimensionality also provides insight into how a sender's data sampling may create \emph{correlation} between variables, and how this interacts with how a sender's model considers \emph{interaction effects}.
-I show that if a sender's models tend to \emph{neglect} the effect of an interaction between two variables, he creates a high degree of \emph{collinearity} between those two variables.
-For example, if he underestimates the interactive effect of $x_i$ and $x_j$, he samples data such that $x_i$ is highly correlated with $x_j$.
-If a sender's models tend to \emph{exaggerate} the effect of an interaction, he makes those variables as \emph{anticollinear} as possible: in the example, this means that $x_i$ would be highly correlated with $x_j$.
+I also show that the model's results deliver identical results with \emph{multidimensional choices} --- i.e., when a receiver chooses $x = (x_1,\ldots,x_n)$.
+Multidimensionality also provides insight into how a sender may create arbitrarily high collinearity between variables in the data when strategically sampling.
+I show that if a sender's models tend to \emph{neglect} the effect of an interaction between two variables $x_i$ and $x_j$, he creates a high degree of \emph{correlation} between $x_i$ and $x_j$.
+If a sender's models tend to \emph{exaggerate} the effect of an interaction, he makes those variables as \emph{anticorrelated} as possible.
 
 \paragraph{Gains from Oversimplification}
 Fourth, I show that a sender gains from model oversimplification.
@@ -264,38 +263,48 @@ I show that the sophisticated sender always gains when pessimsitic \emph{or} opt
 The gain from optimistic senders is asymmetrically larger than for pessimistic senders.
 We thus note that gains from providing optimistic or pessimistic models emerge from the combination of sender model simplicity with strategic sampling.
 
-In addition, I characterize the \emph{optimal distribution} of simpler sender types for the sophisticated sender.
-That is, I answer the following question: if the sophisticated sender could \emph{choose} between senders who estimate optimistic or pessimistic senders, what senders would he pick?
-Should these simple senders sometimes provide the correct models, or always be optimistic or pessimistic?
-I show that this optimal distribution involves choosing an ``arbitrary'' degree of modeling a tradeoff.
-One set of senders is always pessimistic and the other is always optimistic.
-Formally, for each \emph{parameter} $\gamma$ characterizing the degree of the receiver's loss from high $x$, the sophisticated sender creates a simple sender who can \emph{only} model tradeoffs with that $\gamma$ value.
-Those with low $\gamma$ values always estimate optimistic models, and those with high $\gamma$ values always estimate pessimistic models.
-That simple sender then strategically samples data (as a generalist or specialist) so that any additional receiver models always lie above his model.
-Thus, when the sophisticated sender provides a model, the receiver thinks that she either received the true model, or that she received a simpler model.
-But, in the latter case, any additional models she entertains lie \emph{above} the original model, creating an advantage for the sophisticated sender.
-
 This distribution has a real-life analogue, which is \emph{model calibration}.
 Macroeconomists or industrial organization economists, for instance, may calibrate their model parameters using predetermined elasticities from the data, rather than estimating that information organically on original data.
 In this sense, the optimal distribution of sender types involves \emph{calibrating} a fixed (but arbitrary) way of modeling a tradeoff, and then providing that calibrated model to the sender.
 A consulting firm, for instance, may sometimes deploy one of many teams who have fixed (but arbitrary) ways of thinking about tradeoffs.
 Or, an AI company may randomly deploy models calibrated to different levels of tradeoff neglect or exaggeration.
 
-\paragraph{Sender Competition (to fix/formalize)}
-The final set of results studies competition between multiple senders who face overhead costs of providing a model.
-We model two senders who set prices and receive a reputational gain from making $R$ optimistic.
-We show that if the cost of model provision is relatively high, $R$ only buys a model from a single sender who under/overestimates tradeoffs.
-Thus, model simplicity continues to survive into settings with competition.
-However, the subtlety is that because senders receive a reputational gain from providing $R$ a simple model, they may be willing to price their models below cost.
 
-However, if the cost of model provision is relatively low and, in addition, the magnitude of the reputational gain from supplying a simple model is small, a receiver may be willing to purchase models from both senders instead of buying a single simple model from one.
-On the one hand, this generates perfect learning, since $R$ can piece together the true model from both of their pieces of information.
-On the other hand, this erases senders' reputational gain from model simplification.
-Senders are no longer willing to price below cost, generating both an intensive margin (prices) and extensive margin (number of models) discontinuity in expenditures for the sender.
+In addition, I characterize the \emph{optimal distribution} of simpler sender types for a  ``sender designer.''
+I consider a setting where a receiver thinks he either received a model from a ``simple'' sender who was optimistic or pessimistic, or a ``sender designer'' who always provide the true model.
+The sender designer, however, can also \emph{choose} the distribution of simple sender types --- i.e. the degree to which they are optimistic or pessimistic, as well as their relative frequency in the population.
+I show that the optimal form of sender simplicity takes the form of arbitrary \emph{model calibration}.
+For each \emph{parameter} $\gamma$ characterizing the degree of the receiver's tradeoffs, the sophisticated sender creates a simple sender who can \emph{only} model tradeoffs with that $\gamma$ value.
+That simple sender then strategically samples data (as a generalist or specialist) so that any additional receiver models always lie above his model.
+
+This form of model simplicity has a real-life analogue, which is \emph{model calibration}.
+Macroeconomists or industrial organization economists, for instance, may calibrate their model parameters using predetermined elasticities from the data, rather than estimating that information organically on original data.
+In this sense, the optimal distribution of sender types involves \emph{calibrating} a fixed (but arbitrary) way of modeling a tradeoff, and then providing that calibrated model to the sender.
+A consulting firm, for instance, may sometimes deploy one of many teams who have fixed (but arbitrary) ways of thinking about tradeoffs.
+Or, an AI company may randomly deploy models calibrated to different levels of tradeoff neglect or exaggeration.
+
+Moreover, I show that the \emph{distribution} of these sender types is associated with \emph{polarization} in how simple senders consider tradeoffs.
+In particular, I show that the sender designer always warps the distribution of sender types in the population relative to his prior over the magnitude of tradeoffs in the true model.
+In particular, the sender designer places little or \emph{no} mass on simple sender types who model tradeoffs at intermediate values, and places more and more mass on models that are (calibrated to be) very pessimistic or very optimistic.
+I show that as the receiver believes she is more and more likely to see a simple sender's model, this polarization increases.
+In the limit, the type space is composed of either senders who \emph{neglect all tradeoffs} and estimate \emph{linear regression models} on nonlinear data, or who \emph{exaggerate all tradeoffs} and estimte a worst case model.
+
+%
+%\paragraph{Sender Competition (to fix/formalize)}
+%The final set of results studies competition between multiple senders who face overhead costs of providing a model.
+%We model two senders who set prices and receive a reputational gain from making $R$ optimistic.
+%We show that if the cost of model provision is relatively high, $R$ only buys a model from a single sender who under/overestimates tradeoffs.
+%Thus, model simplicity continues to survive into settings with competition.
+%However, the subtlety is that because senders receive a reputational gain from providing $R$ a simple model, they may be willing to price their models below cost.
+%
+%However, if the cost of model provision is relatively low and, in addition, the magnitude of the reputational gain from supplying a simple model is small, a receiver may be willing to purchase models from both senders instead of buying a single simple model from one.
+%On the one hand, this generates perfect learning, since $R$ can piece together the true model from both of their pieces of information.
+%On the other hand, this erases senders' reputational gain from model simplification.
+%Senders are no longer willing to price below cost, generating both an intensive margin (prices) and extensive margin (number of models) discontinuity in expenditures for the sender.
 
 Section \ref{section:setup} lays out the basic model, and I characterize learning in section \ref{section:learning}. Section \ref{section:simple} studies gains from oversimplifying models and the design of an optimal type space for a sophisticated sender. 
-Section \ref{section:competition} investigates how these distortions become change when considering competition between multiple senders.
-Section \ref{section:conclusion} concludes.
+%Section \ref{section:competition} investigates how these distortions become change when considering competition between multiple senders.
+Section \ref{section:conclusion} concludes and discusses future extensions to the current framework.
 The remainder of this section gives an overview of the literature.
 
 \paragraph{Literature}\label{section:literature}
@@ -330,7 +339,7 @@ The set of these additional models is determined by the \emph{simplicity} of the
 In particular, the present paper shows that a sender informed of the true model of the world can benefit by making the receiver think his model was estimated by a sender who had an artifically simple model and strategically sampled.
 The most closely related paper is \citet{gleyze2022value}, who show that an informed sender can often gain by delegating model provision to a (potentially misspecified) sender.
 
-The present paper briefly studies how gains from simplicity operate when there is competition among multiple senders for a receiver's business, which relates it to work such as \citet{dasaratha2025markets}.
+The present paper briefly studies is also related to how gains from simplicity operate when there is competition among multiple senders for a receiver's business, which relates it to work such as \citet{dasaratha2025markets}.
 Mathematically, receivers in the present paper differ in their ability to \emph{model tradeoffs}, which are related to their ability to estimate models on predetermined \emph{subsets} of a parameter space.
 This characterization of commitment --- as well as the problem of the ``sender-type designer'' --- is thus conceptually related to \citet{bizzotto2026limits}'s characterization of the limits of commitment in quantity-price games.
 
@@ -345,7 +354,7 @@ Conceptually, the insight that some senders' gains from providing simple models 
 We begin by laying out a game between a single receiver $R$ (she) and a single sender $S$ (he). $R$ decides whether she would like to contract the services of a sender $S$.
 $S$ collects data and provides $R$ a model describing that data.
 $R$ utilizes the information provided in $S$'s model to make a decision.
-We abstract from prices and competition, but return to study these questions in Section \ref{section:competition}.
+%We abstract from prices and competition, but return to study these questions in Section \ref{section:competition}.
 
 Our running example will be the same as in the introduction: we will consider the case where $R$ is an economist tasked with designing a carbon tax.
 $S$ is a climate scientist who has worked in the private sector.
@@ -460,7 +469,7 @@ A type $\theta$ sender is able to provide $R$ a model in the set $F_{\theta}$, w
 F_{\theta} := \{f_\theta \in F_R : f_\theta = \beta_0+\beta_1x - \delta x^2, \delta \in \theta, (\beta_0,\beta_1) \in \mathbb{R}^2 \}.	
 \end{align*}
 Intuitively, $\theta$ represents the \emph{degree} to which a sender can model \emph{tradeoffs}.
-The sender's type is drawn from a distribution $T_\theta$ over $\Theta$, which is known to $R$.
+The sender's type is drawn from a distribution $T$ over $\Theta$, which is known to $R$.
 
 To start, we assume there are two sender types.
 We make this assumption to highlight the key features of the model, but introduce a richer sender type space later on.
@@ -536,9 +545,9 @@ Suppose $S$ provides a model $f_S \in F_\theta$.
 Let $x^*$ be the receiver's choice of $x \in X$ conditional on her posterior beliefs over models $q|f_S$.
 The sender's utility conditional on $f_S$ is given by:
 \begin{align*}
-U_S(x^*) = \mathbb{E}_{q|f_S}[f_R(x^*)]	.
+U_S^\theta(x^*) = \mathbb{E}_{q|f_S}[f_R(x^*)].
 \end{align*}
-That is, conditional on providing a model $f_S$, $S$ would like to maximize $R$'s expected utility. 
+That is, conditional on providing a model $f_S$, a type $\theta$ $S$ would like to maximize $R$'s expected utility. 
 
 The interpretation of these preferences in our example is that the scientist would like to make the economist \emph{optimistic}.
 He may receive a consulting bonus if the economist is more optimistic about the potential gains she can reap from the carbon tax policy.
@@ -578,7 +587,7 @@ This assumption can be founded through a few different lenses.
 \item \textbf{Strategic Behavior}: the sender may actually be able to make the receiver \emph{more optimistic} if she thinks his model was a simplified model. While we take this assumption as a given, this will be a central result of the paper, and is developed in Section \ref{section:simple}.
 \end{enumerate}
 The case where $S$ provides linear regression models is also of particular interest, given the widespread usage of linear regression models in the business world, economics, and data-driven social sciences.
-We additionally note that while the baseline model assumes a quadratic loss from tradeoffs, Section \label{section:general} shows that the main results are robust to non-quadratic preferences if we impose regularity assumptions.
+We additionally note that while the baseline model assumes a quadratic loss from tradeoffs, Section \ref{section:general} shows that the main results are robust to non-quadratic preferences if we impose regularity assumptions.
 
 Finally, we assume that $S$ must provide the best-fitting model to the data, rather than a model that simply ``fits the data.''
 The interpretation is that $S$ makes an honest effort to provide $R$ the best model he can, given the set of data-generating-processes he can model.
@@ -957,10 +966,29 @@ Thus:
 \end{itemize}
 We defer the sender's choice of $x_\theta$ to the main statement of the result in Theorem \ref{thm:sampling}.
 
-Finally, we note that in our simple type space, the type $\theta_1$ sender has the unique feature that he fits a \emph{linear regression model} to the data.
+The key driver of the result is that strategic sampling creates a \emph{gap} between $f_S$ and the other models the receiver entertains.
+We denote this gap $G(f_S,\sigma_\theta)$:
+\begin{align*}
+G(f_S,\sigma_\theta) := 	\mathbb{E}_{f_R|f_S}[y|x^*,\sigma_\theta]-f_S(x^*).
+\end{align*}
+
+The following corollary shows that this gap disproportionately allows the receiver to gain more from optimistic models that \emph{neglect} tradeoffs than from pessimistic models that exaggerate them.
+\begin{corollary}
+$G(f_S,\sigma_\theta)$ changes as follows.
+\begin{itemize}
+\item If $f_S$ is an optimistic model so that $\sigma_\theta = \overline{\sigma}$, then as $\overline{\sigma}\to\infty$, $G(f_S,\sigma_\theta) \to \infty$.	
+\item If $f_S$ is a pessimistic so that $\sigma_\theta = \underline{\sigma}$, then as $\underline{\sigma}\to0$, $G(f_S,\sigma_\theta) \to(\overline{\gamma}-\mathbb{E}_R[\gamma])(x^*-x_\theta)^2<\infty$.
+\end{itemize}
+\label{corr:gain}
+\end{corollary}
+The interpretation of this corollary is that a \emph{generalist} sender who presents optimistic models makes a receiver have ``rosier views'' about the maximal expected value of $y$ than the \emph{specialist} sender who presents pessimistic models, relative to the provided model $f_S$.
+
+In our simple type space, the type $\theta_1$ sender has the unique feature that he fits a \emph{linear regression model} to the data.
 Our result on strategic sampling says that this sender always estimates models using data sampled from all across the choice space.
 However, regressions are most effective when thought of as \emph{local linear approximations}.
 Thus, the result on sampling contrasts a sender's persuasive desire to fit a regression to ``distantly sampled data'' and the common perception that regressions are most effective when utilized as ``local'' linear approximations.
+
+
 
 %\begin{figure}[H]
 %\centering
@@ -1039,7 +1067,10 @@ Let $\partial \theta$ denote the boundary of $\theta \subsetneq [0,\overline{\ga
 %Otherwise, either one of ($P_\delta$-1) or ($P_\delta$-2) must hold.
 \label{assboundary}	
 \end{assumption}
-We impose Assumption \ref{assboundary} as a regularity condition; it is consistent with either $P_\delta$ being a discrete distribution, or $P_\delta$ being a continuous CDF over  $[0,\overline{\gamma}]$ whose mass is artificially truncated. At a mathematical level, a type $\theta$ $S$'s sampling decision will be determined by how he considers tradeoffs on the ``edge'' of the interval $\theta$. This ``edge'' must occur with non-measure-zero probability to have an effect on $S$'s expected utility.
+We impose Assumption \ref{assboundary} as a regularity condition; it is consistent with either $P_\delta$ being a discrete distribution, or $P_\delta$ being a continuous CDF over  $[0,\overline{\gamma}]$ whose mass is artificially truncated.
+At a mathematical level, a type $\theta$ $S$'s sampling decision will be determined by how he considers tradeoffs on the ``edge'' of the interval $\theta$.
+This ``edge'' must occur with non-measure-zero probability to have an effect on $S$'s expected utility.
+We denot as $P_{f_S}^\theta$ as a type $\theta$'s prior over models $f_S$.
 
 \paragraph{Learning with Interval Types}
 The characterization of $\phi(f_S;\theta,\mu_\theta)$ --- the set of models $R$ considers in addition to $f_S$ --- is the same as above.
@@ -1471,11 +1502,11 @@ Generalizing the intuitions above, we introduce the following notation.
 Let $\delta \in \partial \theta$ be a matrix on the boundary of $\theta$. We denote $\Delta(\delta)$ as follows:
 %\begin{align*}
 %\Delta(\delta|\Sigma_\theta) = 
-%\mathbb{E}_R^\gamma\big[\trace\big((\gamma-\delta)\Sigma_\theta\big)\big|\delta,\theta\big]
-%=\mathbb{E}_R^\gamma\bigg[\sum_{i=1}^n (\gamma_{ii}-\delta_{ii})\Sigma_{ii,\theta} +\sum_{i<j} \big[(\gamma_{ij}+\gamma_{ji})-(\delta_{ij}+\delta_{ji})\big]\Sigma_{ij,\theta}\big|\delta,\theta\bigg].
+%\mathbb{E}_\gamma^R\big[\trace\big((\gamma-\delta)\Sigma_\theta\big)\big|\delta,\theta\big]
+%=\mathbb{E}_\gamma^R\bigg[\sum_{i=1}^n (\gamma_{ii}-\delta_{ii})\Sigma_{ii,\theta} +\sum_{i<j} \big[(\gamma_{ij}+\gamma_{ji})-(\delta_{ij}+\delta_{ji})\big]\Sigma_{ij,\theta}\big|\delta,\theta\bigg].
 %\end{align*}
 \begin{align*}
-\Delta(\delta) = \mathbb{E}_R^\gamma[\gamma|\delta,\theta]-\delta.
+\Delta(\delta) = \mathbb{E}_\gamma^R[\gamma|\delta,\theta]-\delta.
 \end{align*}
 As above, if $\theta \subsetneq \Gamma$, when $R$ sees a model with $\delta$ on the boundary of $\theta$, she entertains additional models.
 The intuitive mapping from the one-dimensional problem to the multidimensional one can be seen by looking at the diagonal entries of $\Delta(\delta)$.
@@ -1504,48 +1535,30 @@ Moreover, senders who neglect interactions between $x_i$ and $x_j$ create collin
 \end{restatable}
 
 \section{Gains from Simplification}\label{section:simple}
-
-Need result on asymmetric gain here.
-
-So far, we have taken model oversimplification as an exogenous feature of our informational environment: different sender types present models that are artificially optimistic or pessimistic.
-This section studies when a sender benefits from simplification, thus providing an \emph{endogenous} channel for the sender to provide simplified models and showing that the sender's use of simple models is a \emph{strategic} choice.
+This section returns to the univariate quadratic model to investigate gains from model simplicity.
+So far, we have taken model simplicity as exogenous: different sender types present models that are artificially optimistic or pessimistic.
+This section studies when a sender benefits from the presence of other, simpler senders. It provides an \emph{endogenous} channel through which a receiver may deal with senders that provide simplified models due to the \emph{strategic choice} of a designer.
 
 In the baseline model, we assumed that senders' types (as subintervals of $[0,\overline{\gamma}]$) were exogeneous and non-overlapping.
-We first return to this setting but allow senders' types to overlap.
-We show that when there are different types of senders, they benefit only when one sender's type  intersects with the \emph{boundary} of another sender's type.
-However, if one sender is made better off by having an overlying type, the other is necessarily made worse off, thus providing a channel for senders' types to not overlap in equilibrium.
+We first look at what happens when senders' types overlap.
+We show that when types are overlapping, they benefit only when one sender's type intersects with the \emph{boundary} of a sender who strategically samples.
+However, if one sender is made better off by the presence of another, the other is necessarily made worse off. This zero-sum feature provides a microfoundation for senders' types not to \emph{not} overlap, as we assumed in Section \ref{section:learning}.
 
-Using these intuitions, we then consider the problem of an ``omniscient'' sender who can model: that is, the sender thinks about tradeoffs in precisely the way the over $\delta$ on the entirety of $[0,\overline{\gamma}]$.
-This designer can either choose to provide the true model, or to draw different types of senders with different probabilities.
-The problem can be thought of as akin to a consulting firm ``drawing'' teams of consultants that can only think about tradeoffs in specific ways, or an AI model designer ``drawing'' different models that are artificially constrained in how they can think.
+Using these intuitions, we then consider the problem of a sender of type $\theta = [0,\overline{\gamma}]$, who we term a ``designer.''
+This sender can estimate all of the models that the receiver would like.
+However, this sender can also \emph{design} the type space $\Theta$ of simpler senders who may estimate optimistic or pessimistic models.
+When the receiver contracts his services, he will thus not know if he is receiving a model from the designer or a type $\theta \in \Theta$.
+The problem can be thought of as a consulting firm organizing teams of consultants that think about tradeoffs differently, or an AI model designer who how deploys different models based on how they think about users' tradeoffs.
 
-We show that if this designer has a continuous prior over $\gamma$, the optimal design of the type space is composed of \emph{singletons}. In particular, for every $\gamma \in [0,\overline{\gamma}]$, there is a type $\theta = \{\gamma\}$.
-Thus, sender types each have a fixed (but arbitrary) of modeling the receiver's tradeoff, meaning the receiver \emph{never} learns the true value of $\gamma$.
-That is, these senders \emph{calibrate} their models to arbitrary values.
-This result emerges both due to the \emph{form} of model simplicity (uncertainty about the magnitude of tradeoffs) and different senders' use of strategic sampling.
+We show that if this designer has a continuous prior over all of $[0,\gamma]$, the optimal design of the type space is composed of \emph{singletons}. In particular, for every $\gamma \in [0,\overline{\gamma}]$, there is a type $\theta = \{\gamma\}$.
+These models are all \emph{calibrated} to a prespecified value of $\gamma$, which is a fixed (but arbitrary) of modeling the receiver's tradeoff, meaning the receiver \emph{never} learns the true value of $\gamma$.
+This result emerges due to the \emph{combination} of model simplicity with senders' ability to strategically sample.
 
-We also characterize the solution where the designer has a discrete prior over $\gamma$, in which case the optimal design involves either \emph{singleton} $\gamma$ values or pooling at most \emph{two} $\gamma$ values into a single type.\footnote{The case where the designer has a continuous prior with mass points does not have a well-designed solution. But, under a perturbation assumption, the optimal type space is composed of an interval and singleton partition, where the upper bound of each interval occurs on a mass point, and ``interval'' senders always distantly sample.}
-
+%We also characterize the solution where the designer has a discrete prior over $\gamma$, in which case the optimal design involves either \emph{singleton} $\gamma$ values or pooling at most \emph{two} $\gamma$ values into a single type.\footnote{The case where the designer has a continuous prior with mass points does not have a well-designed solution. But, under a perturbation assumption, the optimal type space is composed of an interval and singleton partition, where the upper bound of each interval occurs on a mass point, and ``interval'' senders always distantly sample.}
 
 
 
-\subsection{Characterizing Benefits from Oversimplification}
-Change the notationhere.
-The key driver of the result is that strategic sampling creates a \emph{gap} between $f_S$ and the other models the receiver entertains.
-We denote this gap $\Delta(f_S,\sigma_\theta)$:
-\begin{align*}
-\Delta(f_S,\sigma_\theta) := 	\mathbb{E}_{f_R|f_S}[y|x^*,\sigma_\theta]-f_S(x^*).
-\end{align*}
-
-The following corollary shows that this gap disproportionately allows the receiver to gain more from optimistic models that \emph{neglect} tradeoffs than from pessimistic models that exaggerate them.
-\begin{corollary}
-$\Delta(f_S,\sigma_\theta)$ changes as follows.
-\begin{itemize}
-\item If $f_S$ is an optimistic model so that $\sigma_\theta = \overline{\sigma}$, then as $\overline{\sigma}\to\infty$, $\Delta(f_S,\sigma_\theta) \to \infty$.	
-\item If $f_S$ is a pessimistic so that $\sigma_\theta = \underline{\sigma}$, then as $\underline{\sigma}\to0$, $\Delta(f_S,\sigma_\theta) \to(\overline{\gamma}-\mathbb{E}_R[\gamma])(x^*-x_\theta)^2<\infty$.
-\end{itemize}
-\end{corollary}
-The interpretation of this corollary is that a \emph{generalist} sender who presents optimistic models makes a receiver have ``rosier views'' about the maximal expected value of $y$ than the \emph{specialist} sender who presents pessimistic models, relative to the provided model $f_S$.
+\subsection{Model with Overlapping Types}
 
 Previously, we assumed that senders differed in their ability to model the quadratic component of the receiver's models, that different senders could model this component in distinct ways, and thus that the receiver could fully back out the sender's type from the model she received.
 However, we now relax Assumption \ref{asstype} and allow the sender's types to have overlapping supports.
@@ -1555,201 +1568,280 @@ Let $\delta \in \theta \cap \theta'$.
 Conditional on seeing a model of the form $y = \beta_0+\beta_1x -\delta x^2$, the receiver does not know whether this model came from a type $\theta$ or type $\theta'$ sender.
 In particular, we can characterize when uncertainty about the source of the signal can actually work in a sender's benefit, and when it hurts the sender.
 \begin{restatable}{proposition}{simplegain}
-Consider two types of senders $\theta = [\underline{\delta},\overline{\delta}]$ and $[\underline{\delta}',\overline{\delta}']$ such that $\theta \cap \theta' \neq \emptyset$ and $\theta \cap \theta' \subseteq \theta^\circ$.
+Consider two senders $\theta,\theta'$ such that $\theta \cap \theta' \neq \emptyset$.
 Suppose $R$ receives information from either sender with positive probability.
-Fix a sender model $f_S(x)=\beta_0+\beta_1x-\delta x^2$ such that $\delta \in \theta \cap \theta'$.
-Given $f_S(x)$, a type $\theta$ sender's utility strictly increases (decreases) from the existence of type $\theta'$ if one of the following hold.
-\begin{enumerate}
-\item $\delta \in \theta^\circ \neq \emptyset$, $\delta = \overline{\delta}'$, and $\theta'$ distantly (locally) samples.
-\item $\delta \in \theta^\circ \neq \emptyset$, $\delta = \underline{\delta}'$, and $\theta'$ locally (distantly) samples.
-\item $\delta = \overline{\delta}$, $\theta^\circ = \emptyset$, type $\theta$ locally samples, and $\theta'$ distantly (locally) samples.
-\item $\delta = \underline{\delta}$, $\theta^\circ = \emptyset$, type $\theta$ distantly samples, and $\theta'$ locally (distantly) samples.
-\item $\theta^\circ = \emptyset$, $\theta'^\circ \neq \emptyset$, $\delta = \overline{\delta}'$, and $\theta'$ distantly (locally) samples.
-\item $\theta^\circ = \emptyset$, $\theta'^\circ \neq \emptyset$, $\delta = \underline{\delta}'$, and $\theta'$ locally (distantly) samples.
-\end{enumerate}
+Then, a type $\theta$ sender's utility either strictly increases or decreases if and only if $\partial \theta' \cap \theta \neq \emptyset$ or $\partial \theta \cap \theta' \neq \emptyset$.
 \label{prop:simplegain}
 \end{restatable}
-The first part of the proposition shows that the receiver's \emph{maximal expected utility} tends to be higher from models with higher $\gamma$ than the sender's under distant sampling.
-Although the proposition has many cases, they can be grouped as follows.
+There are many permutations to consider, and the proof of the proposition walks exhaustively through all the different cases, but we highlight three here.
+Denote $\theta = [\underline{\delta},\overline{\delta}]$ and $\theta' = [\underline{\delta}',\overline{\delta}']$.
+Given $f_S(x)=\beta_0+\beta_1x-\delta x^2$, a type $\theta$ sender's utility strictly \emph{increases} from the existence of type $\theta'$ in the following cases.
+\begin{enumerate}
+\item $\delta \in \theta^\circ$, $\delta = \overline{\delta}'$, and $\theta'$ samples as a generalist.
+\item $\delta \in \theta^\circ$, $\delta = \underline{\delta}'$, and $\theta'$ samples as a specialist.
+\item $\delta = \overline{\delta}$, $\theta' = \{\delta\}$, type $\theta$ samples as a specialist, and $\theta'$ samples as a generalist.
+\end{enumerate}
 
-The first two cases correspond to situations where the sender's model has a $\delta$ value in the \emph{interior} of $\theta$.
-Without $\theta'$, $R$ would simply deduce that this was the true model.
-However, with $\theta'$, $R$ may entertain \emph{higher} $\gamma$ models or \emph{lower} $\gamma$ models if $\delta$ is on the boundary of $\delta'$.
-If $\delta = \overline{\delta}'$ and $\theta'$ distantly samples, these lead to a gain in $S$'s expected utility, since any higher $\gamma$ models lie \emph{above} the original model.
-If $\delta = \underline{\delta}'$ and $\theta'$ locally samples, $R$ entertains lower $\gamma$ models that lie \emph{below} the original model.
+In the first case, if $\delta \in \theta^\circ$, then $f_S$ is the true model if it came from type $\theta$.
+However, because $\delta = \overline{\delta}'$, if the model came from $\theta'$, the true model may also have $\gamma \geq \delta$.
+Accordingly, the type $\theta'$ sender samples as a generalist, meaning that $R$ entertains models above $f_S$.
+Thus, the receiver entertains both the possibility that $f_S$ is the true model, but also models with $\gamma \geq \overline{\delta}'$.
+This benefits the type $\theta$ sender, who knows that he has the true model.
 
-The next two cases consider situations where $\delta$ is at the boundary of $\theta$.
-It may be that case that $\delta = \overline{\delta}$, but that a type $\theta$ sender ex-ante thought $\underline{\delta}$ was more likely and thus locally sampled, even though ex-post he would have preferred distant sampling.
-In this case, he is made better by a sender who considers the same models but distantly samples.
-There is an analogous case for $\delta = \underline{\delta}$.
+The same logic applies to the second case, where $\delta = \underline{\delta}'$ and type $\theta'$ samples as a specialist.
+Type $\theta$ provides the true model, but the receiver entertains shallower models that lie above $f_S$ thanks to the type $\theta'$ sender's local sampling.
 
-The final two cases consider situations where $\theta = \{\delta\}$ is a singleton.
-In this case, if $R$ thinks the model came from type $\theta$, she  will consider both higher and lower $\gamma$ value models.
-However, if $\delta = \overline{\delta}'$ and $\theta'^\circ$, she may think that model came from $\theta'$.
-Because $\theta^\circ \neq \emptyset$, she will \emph{only} consider models with higher $\gamma$ that lie \emph{above} the original model.
-A similar logic applies to $\delta = \underline{\delta}'$.
+The third case considers a situation where a type $\theta$ is restricted in how he can sample.
+In particular, it consideers a case where $\delta = \overline{\delta}$ but $\theta$ samples as a specialist.
+This may occur because $\underline{\delta}$ is more likely for this sender type, and he thus ex-ante chooses specialist sampling, even though he (ex-post) would be better off sampling as a generalist.
+However, if $\theta' = \{\delta\}$ and that sender is sampling as a generalist, the type $\theta$ sender can be made better off, because the receiver now entertains some models above $f_S$ rather than only ones below.
 
-A corollary of this result, however, is that if both $\theta$ and $\theta'$ senders emerge with positive probability, interactions are zero-sum: if one sender is made better off by another, the other is made worse off.
+A corollary of this result is that if both $\theta$ and $\theta'$ senders emerge with positive probability, interactions are zero-sum: if one sender is made better off by another, the other is made worse off.
 \begin{corollary}
 Conditional on providing a model $f_S(x)$, suppose a type $\theta$ sender's expected utility increases from a type $\theta'$ sender's existence.
 Then, the type $\theta'$ sender's expected utility decreases from type $\theta$ sender's existence.
 \end{corollary}
 
 
-\subsection{Optimal Type Space Design}
-Using these results, we consider the problem of a ``sophisticated'' type-space designer $D$. 
-$D$ has a prior over $\beta_0,\beta_1,\delta$ given by $P_0^D$, $P_1^D$, $P_\gamma^D$.
-We write as $P_{f_S}$ his prior over models $f_S$.
+\subsection{Type Space Design}
+Using these results, we consider the problem of a ``sophisticated'' sender $D$.
+$D$ has a prior over $\beta_0,\beta_1,\delta$ given by $P_0^D$, $P_1^D$, $P_\delta^D$.
+We assume $P_\delta^D$ has support on all of $[0,\overline{\gamma}]$.
+To shut down the role of prior misspecification we assume that $P_\delta^D = P_\gamma^R$.
+We write as $P_{f_S}^D$ his prior over models $f_S$.
 
 We suppose that $D$ faces the following problem.
-Conditional on a model $f_S$ probability $q_0$, $R$ believes she receives the true model (and does not consider alternative models).
-With probability $1-q_0$, she believes the true model comes from the type space $\Theta$.
-The leading interpretation is that $R$ contracts from multiple senders, and always deals with a ``truthful'' sender who provides the true model with an exogenous probability.
+Conditional on a model $f_S$, with probability $q_0$, $R$ believes she has received a model from $D$.
+With probability $1-q_0$, she believes the model came from a type space $\Theta$.
+$D$ can design the type space $\Theta$. That is, his problem is to choose a set $\Theta \subseteq \mathcal{P}([0,\overline{\gamma}])$ such that for all $\theta \in \Theta$, $\theta$ is a closed interval.
+Her objective is:
+\begin{align*}
+\max_{\Theta,T} \int_{f_S \in F_R} \max_{x}\mathbb{E}_{q|f_S,T,\Theta}[f_R(x)]dP_{f_S}^D(f_S).
+\end{align*}
+That is, the designer wants to, as behavior, maximize the receiver's perception of the maximal value of $y$ she can achieve.
+We note that the impact of $\Theta$ is through the receiver's \emph{posterior}.
+
+%\begin{align*}
+%\max_{\Theta}
+%\int_{\Theta}\int_{f_S \in F_S^\theta} \max_{x}\mathbb{E}_{q|f_S}[f_R(x)]dP_{f_S}^D(f_S|\theta)dT(\theta).
+%\end{align*}
+%We note that $P_{f_S}^D(f_S|\theta)$ is the probability that the \emph{designer} assigns to a model $f_S$ in $F_S^\theta$ provided by a type $\theta$ sender. 
 
 The order of events is as follows.
-$D$ first chooses a type space $\Theta$ such that all elements in $\Theta$ are closed intervals in $\Gamma$ (potentially degenerate).
-Then, $D$ chooses a distribution over types $T_\theta$.
-The sender contracts the services of a sender, and receives a model from the ``true'' sender with probability $q_0$ or from the type space $\Theta$ with probability $1-q_0$.
-In the latter case, a sender is randomly drawn from the type space $\Theta$ according to $T_\theta$.
-In either case, the deployed sender supplies the model of best fit.
+$D$ first chooses a type space $\Theta$.
+Then, $D$ chooses a distribution over types $T$.
+The sender contracts the services of a sender, and receives a model from $D$ with probability $q_0$ or from the type space $\Theta$ with probability $1-q_0$.
+Conditional on the latter event, she received a model from a type $\theta$ with probability $T$.
+In either case, the deployed sender supplies the model of best fit, and the rest of the events are as above.
 
 The optimal characterization of the type space is as follows.
 \begin{restatable}{theorem}{optimaltype}
-Suppose $P_\gamma^D$ is continuous.
-Then, the optimal type space is the collection of singletons on $[0,\overline{\gamma}]$: $\Theta = \big\{\{\delta\} : \delta \in \Gamma\big\}$.
-Moreover, $T_\theta$ places positive mass on all points with positive mass in $P_\gamma^R$.
-$D$'s utility is increasing in $q_0$.
+Suppose $P_\delta^D$ is continuous.
+Then, the optimal type space is the collection of singletons on $[0,\overline{\gamma}]=\Gamma$: $\Theta = \big\{\{\delta\} : \delta \in \Gamma\big\}$.
+Moreover, $T$ is given by a continuous distribution $t$ such that
+\begin{align}
+t(\delta) = \max\bigg\{0,	p_\delta^D(\delta)\bigg(\sqrt{\frac{q_0h(\delta)}{(1-q_0)K}}-\frac{q_0}{1-q_0}\bigg)\bigg\}
+\tag{$T^*$}
+\label{eq:optimalT}	
+\end{align}
+where $h(\delta) \geq 0$ is such that $h(\mathbb{E}_\gamma^R[\delta])=0$, $h'>0$ for $\delta>\mathbb{E}_\gamma^R[\delta]$, $h'<0$ for $\delta<\mathbb{E}_\gamma^R[\delta]$ and $K>0$ is a constant.
+Moreover, $t(\mathbb{E}_\gamma^R[\gamma]) = 0$.
 \label{thm:optimaltype}
 \end{restatable}
 
-This result relies on many of the intuitions of Proposition \ref{prop:simplegain}.
+We first interpret the result before describing its mathematical intuition.
+Theorem \ref{thm:optimaltype} first says that the optimal type \emph{space} is given by a collection of singletons.
+For each $\delta \in [0,\overline{\gamma}]$ the designer creates a sender of type $\{\delta\}$.
+Recalling a prior definition, this sender has the interpretation that he \emph{calibrates} the value of $\delta$ to a fixed (but arbitrary) value in $[0,\overline{\gamma}]$.
+This means that conditional on seeing a model $f_S$, the receiver believes it is either the true model or was calibrated to an \emph{arbitrary} value, but no more.
+
+The second part of the Theorem tells us what \emph{shape} the distribution of $\{\delta\}$ the designer utilizes.
+The solution is that the designer takes his prior over and \emph{warps it} in a way that pushes more mass to the \emph{edges} of $[0,\overline{\gamma}]$.
+In this sense, the designer \emph{polarizes} simple senders towards models calibrated to be \emph{arbitrarily} optimistic or pessimistic.
+In particular, we also have $t(\mathbb{E}_\gamma^R[\gamma]) = 0$, i.e. $t$ puts $0$ mass on types with $\delta$ equal to the receiver's prior expectation of $\gamma$.
+
+This idea is shown in  Figure \ref{fig:typespace} below.
+The solid line shows the \emph{designer}'s prior distribution over $\delta$, which is given by a continuous uniform distribution on $[0,\overline{\gamma}]$.
+The dotted line shows that the types he creates are concentrated towards the edges at $\delta = 0$ (i.e. linear models) and $\delta = \overline{\gamma}$ (i.e. worst-case models).
+\begin{figure}[H]
+    \caption{Prior distribution $p_\delta^D(\delta)$ of $\gamma$ vs. optimal distribution of singleton types $t(\delta)$}
+\centering
+    \begin{tikzpicture}
+    \begin{axis}[width=0.49\textwidth,
+        xmin=0, xmax=1.0,
+        ymin=-0.01, ymax=1.25,
+        axis on top=true,
+        xlabel={Value of tradeoff $\delta$},
+        ylabel near ticks,
+        yticklabels={,},
+        xtick={0,1},
+        xticklabels={0,$\overline{\gamma}$},
+        ]
+        \addplot [dashed, mark=none, draw=Violet, domain=0:1, samples=100, ultra thick] {max(0, sqrt(abs(x-0.5))/0.33 - 1)};
+        \addplot [mark=none, draw=ForestGreen, domain=0:1, samples=100, ultra thick] {0.5};
+        \addplot [mark=none,draw=black,dashed,domain=0:1] coordinates {(0.5,0) (0.5,1.25)};
+       \node at (axis cs:0.62,0.82) {\footnotesize $\delta = \mathbb{E}_\gamma^R[\gamma]$};
+       \node at (axis cs:0.2,1) {\footnotesize $t(\delta)$};
+	\draw[-] (axis cs:0.2,0.95) -- (axis cs:0.15,0.85);
+       \node at (axis cs:0.85,0.35) {\footnotesize $p_\delta^D(\gamma)$};
+	\draw[-] (axis cs:0.85,0.39) -- (axis cs:0.85,0.49);	
+    \end{axis}
+    \end{tikzpicture}
+    \label{fig:typespace}
+\end{figure}
+
+The first part of the result relies on many of the intuitions of Proposition \ref{prop:simplegain}.
 Consider a model of the form $f_S(x) = \beta_0+\beta_1x-\delta x^2$.
 For each $\delta$, we introduce a sender of type $\{\delta\}$.
 We refer to this sender as an ``arbitrary'' type sender, in the sense that he provides models with an arbitrarily fixed value of $\delta$. 
-Conditional on seeing $f_S(x)$, $R$ would believe that it either came from the ``true'' type of sender or the ``arbitrary'' type of sender.
+Conditional on seeing $f_S(x)$, $R$ would believe that it was either a true model from the designer or a different model provided by the 
 In the former case, the receiver would believe $f_S$ is the true model.
-In the latter case, because the arbitrary type of sender sample strategically, $R$'s maximal expected utility from considering alternative models would be higher than from just consider $f_S$.
-The more likely the latter case, the higher $R$'s maximal expected utility is, from the designer's perspective; thus $D$'t utility is increasing in $q_0$.
-The designer thus always gains from creating an ``arbitrary'' sender for each $\delta \in \Gamma$ and matching the probabilities of each of these types to the value of $\gamma$ he entertains in his prior.
+In the latter case, because the arbitrary type of sender sampled strategically, $R$'s maximal expected utility from considering alternative models would be higher than from just considering $f_S$.
+The designer thus always gains from creating an ``arbitrary'' sender for each $\delta \in \Gamma$.
 
 Naturally, $D$ could also introduce a sender of type $\theta = [\underline{\delta}_\theta,\overline{\delta}]$ with $\theta^\circ \neq \emptyset$.
-In this case, the assumption that $P_\gamma^D$ has a continuous density is crucial.
+In this case, the assumption that $P_\delta^D$ has a continuous density is crucial.
 In particular, this sender could distantly sample, meaning that conditional on seeing $\delta = \overline{\delta}$, $R$ would entertain even higher expected utility models than if she were to think it only came from an arbitrary type $\{\overline{\delta}\}$ sender.
 To guarantee this even sharper gain from model simplification, for any model with $\delta \in \theta^\circ$, type $\theta$ would necessarily have to provide the \emph{true model}, erasing any potential gains from tradeoff under/overestimatement.
 Since $\overline{\delta}$ is a singleton, it has measure $0$ in $D$'s prior, while $\theta^\circ$ has measure greater than $0$.
 
-Because $D$'s utility is increasing in $q_0$, if possible, $D$ would send $q_0 \to 1$.
-In this sense, a type space where senders use a fixed (but entirely arbitrary) way of modeling tradeoffs can be seen as the limiting case for a situation where a designer begins by modeling the ``true model'' and then artificially simplifying his model. 
+The intuition for the second part of the result is as follows.
+The designer's problem is to choose a distribution over types which, in this case, boils down to just being a distribution over the set of singletons $\{\delta\}$.
+In particular, he designates an amount of probability density to allocate to each $\delta \in [0,\overline{\gamma}]$, subject to the constraint that these densities must integrate out to $1$.
 
+Suppose $\delta = \mathbb{E}_\gamma^R[\gamma]$, which is the \emph{receiver}'s ex-ante expectation of $\gamma$.
+Looking back to Proposition \ref{prop:reduction}, simple senders gain neither from strategic nor local sampling.
+Relatedly, this means that the designer has no incentive to place mass on $\delta$ values near $\mathbb{E}_\gamma^R[\gamma]$.
+On the other hand, as $\delta$ gets farther and farther away from $\mathbb{E}_\gamma^R[\gamma]$, simple senders provide a larger and larger gain from simple models.
+In fact, the gains to the sender are conditionally maximal if $\delta = 0$ or $\delta = \overline{\gamma}$.
+This is what drives the ``polarization'' of the type space.
 
-As a result, we also consider separately the case where $P_\gamma^D$ is \emph{discrete}.
-In this case, the optimal type space consists of both \emph{singletons} and \emph{doubles} --- i.e. $D$ either provides an arbitrary model or pools together no more than two values of $\delta$ together.
-We write $\Gamma = \{\gamma_i\}_{i \in \mathbb{N}}$.
-\begin{restatable}{proposition}{optimaltypediscrete}
-Suppose the type space designer's prior $P_\gamma^D$ over $\Gamma$ is discrete.
-Then the optimal type space is given by a partition of $\Gamma$ into a combination of singletons $\{\delta_i\}$ and doubles $\{\delta_i,\delta_{i+1}\}$.
-\label{prop:optimaltypediscrete}
-\end{restatable}
-
-
-
-\paragraph{Version 2:}
-
-The order of events is as follows.
-$D$ first chooses a type space $\Theta \subseteq \mathcal{P}(\Gamma)$. $\Theta$ must have the following properties.
-\begin{enumerate}
-\item For each $\theta \in \Theta$, $\theta$ must be a closed (potentially degenerate) interval.
-\item If $\theta^\circ \neq \emptyset$, there exists $\Delta$ arbitrarily small such that the length of $\theta$ can be no smaller than $\Delta$
-\end{enumerate}
-The first property is definitional.
-The second ensures the existence of a well-defined solution to the problem.
-
-The designer chooses a distribution of $T_\theta$ over $\Theta$.
-The receiver then contracts a sender to investigate a choice $x_\theta$.
-A type $\theta$ sender is randomly drawn from $\Theta$ according to $T_\theta$.
-That sender strategically chooses a sampling strategy $\mu_\theta$ and provides a model $f_S^\theta$ to the receiver who then updates.
-
-$D$'s expected utility is the same as senders': he would like to maximize $R$'s expectation of her utility, given she sees a model $f_S^\theta$ and knows type $\theta$ sender samples using a distribution $\mu_\theta$.
-From Proposition \ref{prop:forecast} and Theorem \ref{thm:sampling}, we can expression $R$'s expected utility, conditional on seeing a model $f_S = \beta_0+\beta_1-\delta x^2$ as
+The degree to which the prior $p_\delta^D$ is warped is given by
 \begin{align*}
-V^R(f_S) = \max_x \mathbb{E}_{\theta|f_S}\bigg[f_S(x)+(\mathbb{E}^R[\gamma|\delta,\theta]-\delta)\big(\sigma_\theta^2-(x-x_\theta)^2\big)\bigg].
+\sqrt{\frac{q_0h(\delta)}{(1-q_0)K}}-\frac{q_0}{1-q_0},	
 \end{align*}
-In turn, $D$ in turn integrates $V^R$ over his prior over models
-\begin{align}
-U(T_\Theta,\Theta)
-=
-\int_{\Theta}\int_{F_R} V^R(f_S)dP(f_S|\theta)dT(\theta)	
-\end{align}
+where $K$ is a constant of integration determined by the constrained that $t$ must integrate to $1$.
+We note that as $q_0$ increases, the receiver is more likely to think that she saw the designer's model, and that as $q_0$ decreases, this is less likely.
 
-\begin{restatable}{theorem}{optimaltypealt}
-The optimal type space design is characterized by an interval $[\underline{\delta},\overline{\delta}]$.
-If $\underline{\delta}>0$, there is a type $\underline{\theta} = [\underline{\delta},\underline{\delta}+\Delta$.
-If $\overline{\delta}<\overline{\gamma}]$, there is a type $\overline{\theta} = [\overline{\delta}-\Delta,\overline{\delta}]$.
-Then, $\Theta$ is a collection of singletons with two intervals at the end:
-Then, $\Theta \underline{\theta} \cup \overline{\theta} \cup \{\delta\}_{\delta \in [\underline{\delta},\overline{\delta}]-\big(\overline{\theta} \cup \underline{\theta}\big)}$.
-If $[\underline{\delta},\overline{\delta}]=[0,\overline{\gamma}]$, then $\Theta$ is a collection of singletons: $\Theta = \{\{\delta\} : \delta \in \Gamma\}$.
-\label{thm:optimaltypealt}
-\end{restatable}
-
-
-
-
-\section{Competition}\label{section:competition}
-This section is largely under construction! See a sketch below, but please click the link to see if this is available in a future draft.
-
-We now consider competition between multiple senders who provide information at market prices. Following the previous section, we consider senders drawn from arbitrary type spaces, i.e. such that $\Theta = \{\{\delta\} : \delta \in \Gamma\}$.
-In particular, we consider two senders.
-
-We assume that senders each incur a cost of $c$ for providing models.
-This could represent the price of collecting data for the sender, as well as the labor required to fit the model, present the model to the receiver, and other managerial or overhead expenses.
-The two senders compete over prices.
-$R$ purchases a model from whomever provides his services at a lower price.
-This is due to the fact that $R$ cannot distinguish the two senders; thus, even if one sender precommitted to always providing the true model (instead of a simplified one), 
-
-A type $\theta$ sender's profits from receiving a contract from $R$ are given by price less cost, plus a reputational component.
-Profits are written as follows.
-\begin{align}
-p-c+\omega
-\mathbb{E}_{f_R}\bigg(\mathbb{E}_{f_S^\theta}\big[\max_{x}\mathbb{E}_{f_R|f_S^\theta}[f_R(x)]-	\max_{x}f_R^\theta(x)\big]\bigg) \qquad \omega > 0
-\end{align}
-The main innovation is the reputational component multiplied by $\omega > 0$.
-The interpretation is that $R$ values not only immediate profits from the project, but also a further gain from making $S$ optimistic (such as follow on contracts, a gain from the approval of a project, or additional reputational considerations).
-The key difference in this case is that the reputational gain is normalized to $0$ relative to $R$'s true model.
-
-\begin{restatable}{proposition}{pricing}
-Suppose $R$ only buys from one sender.
-Then, both senders set $p<c$.
-\label{prop:pricing}
-\end{restatable}
-The intuition is as follows.
-Suppose both senders priced at $c$.
-In this case, the reputational gain for both senders would be positive.
-However, because each type $\theta$ samples stragecically, $R$ entertains models that lie above $f_S^\theta$, meaning the reputational gain is positive.
-Thus, both senders are willing to price below $c$.
-
-The key insight, however, is that this requires $R$ to purchase information from \emph{only} a single sender.
-However, $R$ could in fact purchase models from both senders simultaneously.
-In this case, the result can generate an increase in prices.
-Recall in this case that the value of information from the ``arbitrary'' type space is given by
+The following proposition shows first that this ``polarization'' is increasing in $q_0$, in the sense that as $q_0$ increases, $t(\delta)$ places more and more mass on extreme types with very high or low $\delta$ values, and less (or none) on intermediate types.
+It shows that this polarization survives even as $q_0 \to 0$ (so the receiver is less likely to think she sees the true model), and concentrates mass on the extremes as $q_0 \to 1$ (so the receiver thinks she always sees the true model).
+\begin{restatable}{proposition}{polarizationlimit}
+The polarization of the type space is increasing in $q_0$. That is, 
+define $\underline{\delta}_0$ and $\overline{\delta}_0$ as:
 \begin{align*}
-V^I = \frac{1}{4}\frac{\Var_{\alpha_1}^R(\alpha_1)}{\mathbb{E}_{\gamma}^R(\gamma)}
+\underline{\delta}_0 = \min\{\delta : t(\delta) = 0\}
+\qquad
+\overline{\delta}_0 = \max\{\delta : t(\delta) = 0\}	.
 \end{align*}
-Write the equilibrium of this model as $c-\omega\kappa$.
-By contrast, the value from full information is given by
+Then $\underline{\delta}_0$ is decreasing in $q_0$ and $\overline{\delta}_0$ is increasing in $q_0$.
+Moreover, as $q_0 \to 0$, we have
 \begin{align*}
-V^F = \frac{1}{4}\mathbb{E}_{\alpha_1}^R\bigg(\frac{\alpha_1^2}{\gamma}\bigg)-\frac{\mathbb{E}_{\alpha_1}^R(\alpha_1)}{4\mathbb{E}_{\gamma}^R(\gamma)}
-\end{align*}	
-Then, we have the following result.
-\begin{restatable}{theorem}{sequential}
-Suppose $V^F-2c< V^I-c+\omega\kappa$. 
-Then, $p=c$, and $R$ buys from both senders in equilibrium.
-\label{thm:sequential}
+t(\delta) \to \frac{p_\delta^D(\delta)\sqrt{h(\delta)}}{\int_0^{\overline{\gamma}}p_\delta^D(\delta)\sqrt{h(\delta)}d\delta}.
+\end{align*}
+As $q_0 \to 0$, we have $t(\delta)$ converge to a distribution that either places all mass on $\delta = 0$, all mass on $\delta = \overline{\gamma}$, or positive mass on both (and $0$ on $(0,\overline{\gamma})$).
+\label{prop:polarizationlimit}
 \end{restatable}
-First, note that when $R$ buys from both receivers, she is able to recover the true model; in particular, she has four conditions with which to identify the true model.
-In the case where $R$ buys from both senders, this thus erases any of the gains $\omega k$ from making $R$ optimistic, generating an increase in prices relative to the situation in which $R$ only purchased from one sender.
 
-For this to occur in equilibrium, it must be incentive compatible for $R$ to want to purchase information from two senders. In particular, $R$ must prefer to buy models from two senders as opposed to just buying from one (at a price below $c$).
-A necessary condition is that $c$ is sufficiently low, but even then, it must be that the reputational gain (and hence the amount by which senders are willing to mark down prices) is also sufficiently small to justify not simply purchasing from one sender, even if the quality of information is lower.
+It shows that as $q_0 \to 1$, the optimal distribution either converges to only providing senders with type $\{0\}$
+
+
+%\paragraph{Version 2:}
+%
+%The order of events is as follows.
+%$D$ first chooses a type space $\Theta \subseteq \mathcal{P}(\Gamma)$. $\Theta$ must have the following properties.
+%\begin{enumerate}
+%\item For each $\theta \in \Theta$, $\theta$ must be a closed (potentially degenerate) interval.
+%\item If $\theta^\circ \neq \emptyset$, there exists $\Delta$ arbitrarily small such that the length of $\theta$ can be no smaller than $\Delta$
+%\end{enumerate}
+%The first property is definitional.
+%The second ensures the existence of a well-defined solution to the problem.
+%
+%The designer chooses a distribution of $T$ over $\Theta$.
+%The receiver then contracts a sender to investigate a choice $x_\theta$.
+%A type $\theta$ sender is randomly drawn from $\Theta$ according to $T$.
+%That sender strategically chooses a sampling strategy $\mu_\theta$ and provides a model $f_S^\theta$ to the receiver who then updates.
+%
+%$D$'s expected utility is the same as senders': he would like to maximize $R$'s expectation of her utility, given she sees a model $f_S^\theta$ and knows type $\theta$ sender samples using a distribution $\mu_\theta$.
+%From Proposition \ref{prop:forecast} and Theorem \ref{thm:sampling}, we can expression $R$'s expected utility, conditional on seeing a model $f_S = \beta_0+\beta_1-\delta x^2$ as
+%\begin{align*}
+%V^R(f_S) = \max_x \mathbb{E}_{\theta|f_S}\bigg[f_S(x)+(\mathbb{E}^R[\gamma|\delta,\theta]-\delta)\big(\sigma_\theta^2-(x-x_\theta)^2\big)\bigg].
+%\end{align*}
+%In turn, $D$ in turn integrates $V^R$ over his prior over models
+%\begin{align}
+%U(T_\Theta,\Theta)
+%=
+%\int_{\Theta}\int_{F_R} V^R(f_S)dP(f_S|\theta)dT(\theta)	
+%\end{align}
+%
+%\begin{restatable}{theorem}{optimaltypealt}
+%The optimal type space design is characterized by an interval $[\underline{\delta},\overline{\delta}]$.
+%If $\underline{\delta}>0$, there is a type $\underline{\theta} = [\underline{\delta},\underline{\delta}+\Delta$.
+%If $\overline{\delta}<\overline{\gamma}]$, there is a type $\overline{\theta} = [\overline{\delta}-\Delta,\overline{\delta}]$.
+%Then, $\Theta$ is a collection of singletons with two intervals at the end:
+%Then, $\Theta \underline{\theta} \cup \overline{\theta} \cup \{\delta\}_{\delta \in [\underline{\delta},\overline{\delta}]-\big(\overline{\theta} \cup \underline{\theta}\big)}$.
+%If $[\underline{\delta},\overline{\delta}]=[0,\overline{\gamma}]$, then $\Theta$ is a collection of singletons: $\Theta = \{\{\delta\} : \delta \in \Gamma\}$.
+%\label{thm:optimaltypealt}
+%\end{restatable}
+%
+%
+%
+
+%\section{Competition}\label{section:competition}
+%This section is largely under construction! See a sketch below, but please click the link to see if this is available in a future draft.
+%
+%We now consider competition between multiple senders who provide information at market prices. Following the previous section, we consider senders drawn from arbitrary type spaces, i.e. such that $\Theta = \{\{\delta\} : \delta \in \Gamma\}$.
+%In particular, we consider two senders.
+%
+%We assume that senders each incur a cost of $c$ for providing models.
+%This could represent the price of collecting data for the sender, as well as the labor required to fit the model, present the model to the receiver, and other managerial or overhead expenses.
+%The two senders compete over prices.
+%$R$ purchases a model from whomever provides his services at a lower price.
+%This is due to the fact that $R$ cannot distinguish the two senders; thus, even if one sender precommitted to always providing the true model (instead of a simplified one), 
+%
+%A type $\theta$ sender's profits from receiving a contract from $R$ are given by price less cost, plus a reputational component.
+%Profits are written as follows.
+%\begin{align}
+%p-c+\omega
+%\mathbb{E}_{f_R}\bigg(\mathbb{E}_{f_S^\theta}\big[\max_{x}\mathbb{E}_{f_R|f_S^\theta}[f_R(x)]-	\max_{x}f_R^\theta(x)\big]\bigg) \qquad \omega > 0
+%\end{align}
+%The main innovation is the reputational component multiplied by $\omega > 0$.
+%The interpretation is that $R$ values not only immediate profits from the project, but also a further gain from making $S$ optimistic (such as follow on contracts, a gain from the approval of a project, or additional reputational considerations).
+%The key difference in this case is that the reputational gain is normalized to $0$ relative to $R$'s true model.
+%
+%\begin{restatable}{proposition}{pricing}
+%Suppose $R$ only buys from one sender.
+%Then, both senders set $p<c$.
+%\label{prop:pricing}
+%\end{restatable}
+%The intuition is as follows.
+%Suppose both senders priced at $c$.
+%In this case, the reputational gain for both senders would be positive.
+%However, because each type $\theta$ samples stragecically, $R$ entertains models that lie above $f_S^\theta$, meaning the reputational gain is positive.
+%Thus, both senders are willing to price below $c$.
+%
+%The key insight, however, is that this requires $R$ to purchase information from \emph{only} a single sender.
+%However, $R$ could in fact purchase models from both senders simultaneously.
+%In this case, the result can generate an increase in prices.
+%Recall in this case that the value of information from the ``arbitrary'' type space is given by
+%\begin{align*}
+%V^I = \frac{1}{4}\frac{\Var_{\alpha_1}^R(\alpha_1)}{\mathbb{E}_{\gamma}^R(\gamma)}
+%\end{align*}
+%Write the equilibrium of this model as $c-\omega\kappa$.
+%By contrast, the value from full information is given by
+%\begin{align*}
+%V^F = \frac{1}{4}\mathbb{E}_{\alpha_1}^R\bigg(\frac{\alpha_1^2}{\gamma}\bigg)-\frac{\mathbb{E}_{\alpha_1}^R(\alpha_1)}{4\mathbb{E}_{\gamma}^R(\gamma)}
+%\end{align*}	
+%Then, we have the following result.
+%\begin{restatable}{theorem}{sequential}
+%Suppose $V^F-2c< V^I-c+\omega\kappa$. 
+%Then, $p=c$, and $R$ buys from both senders in equilibrium.
+%\label{thm:sequential}
+%\end{restatable}
+%First, note that when $R$ buys from both receivers, she is able to recover the true model; in particular, she has four conditions with which to identify the true model.
+%In the case where $R$ buys from both senders, this thus erases any of the gains $\omega k$ from making $R$ optimistic, generating an increase in prices relative to the situation in which $R$ only purchased from one sender.
+%
+%For this to occur in equilibrium, it must be incentive compatible for $R$ to want to purchase information from two senders. In particular, $R$ must prefer to buy models from two senders as opposed to just buying from one (at a price below $c$).
+%A necessary condition is that $c$ is sufficiently low, but even then, it must be that the reputational gain (and hence the amount by which senders are willing to mark down prices) is also sufficiently small to justify not simply purchasing from one sender, even if the quality of information is lower.
 
 
 \section{Conclusion}\label{section:conclusion}
@@ -2249,10 +2341,10 @@ f_R(x)
 The proof of this result follows nearly identically to that of Theorem \ref{thm:sampling}.
 The key is that
 \begin{align*}
-\mathbb{E}_R^\gamma\big[\trace\big((\gamma-\delta)\Sigma_\theta\big)\big|\delta,\theta\big]
-=\mathbb{E}_R^\gamma\bigg[\sum_{i=1}^n (\gamma_{ii}-\delta_{ii})\Sigma_{ii,\theta} +\sum_{i<j} \big[(\gamma_{ij}+\gamma_{ji})-(\delta_{ij}+\delta_{ji})\big]\Sigma_{ij,\theta}\big|\delta,\theta\bigg]
+\mathbb{E}_\gamma^R\big[\trace\big((\gamma-\delta)\Sigma_\theta\big)\big|\delta,\theta\big]
+=\mathbb{E}_\gamma^R\bigg[\sum_{i=1}^n (\gamma_{ii}-\delta_{ii})\Sigma_{ii,\theta} +\sum_{i<j} \big[(\gamma_{ij}+\gamma_{ji})-(\delta_{ij}+\delta_{ji})\big]\Sigma_{ij,\theta}\big|\delta,\theta\bigg]
 \\
-=\mathbb{E}_R^\gamma\bigg[\sum_{i=1}^n \Delta_{ii}(\delta)\Sigma_{ii,\theta} +\sum_{i<j} \big[\Delta_{ij}(\delta)+\Delta_{ji}(\delta)\big]\Sigma_{ij,\theta}\big|\delta,\theta\bigg]
+=\mathbb{E}_\gamma^R\bigg[\sum_{i=1}^n \Delta_{ii}(\delta)\Sigma_{ii,\theta} +\sum_{i<j} \big[\Delta_{ij}(\delta)+\Delta_{ji}(\delta)\big]\Sigma_{ij,\theta}\big|\delta,\theta\bigg]
 \end{align*}
 which generates corner solution depending on the expected signs of $\Delta_{ii}$ and $\Delta_{ij}+\Delta_{ji}$.
 \end{proof}
@@ -2263,6 +2355,16 @@ which generates corner solution depending on the expected signs of $\Delta_{ii}$
 
 \simplegain*
 \begin{proof}
+We show the following cases exhaustively.
+Given $f_S(x)$, a type $\theta$ sender's utility strictly increases (decreases) from the existence of type $\theta'$ if one of the following hold.
+\begin{enumerate}
+\item $\delta \in \theta^\circ \neq \emptyset$, $\delta = \overline{\delta}'$, and $\theta'$ distantly (locally) samples.
+\item $\delta \in \theta^\circ \neq \emptyset$, $\delta = \underline{\delta}'$, and $\theta'$ locally (distantly) samples.
+\item $\delta = \overline{\delta}$, $\theta^\circ = \emptyset$, type $\theta$ locally samples, and $\theta'$ distantly (locally) samples.
+\item $\delta = \underline{\delta}$, $\theta^\circ = \emptyset$, type $\theta$ distantly samples, and $\theta'$ locally (distantly) samples.
+\item $\theta^\circ = \emptyset$, $\theta'^\circ \neq \emptyset$, $\delta = \overline{\delta}'$, and $\theta'$ distantly (locally) samples.
+\item $\theta^\circ = \emptyset$, $\theta'^\circ \neq \emptyset$, $\delta = \underline{\delta}'$, and $\theta'$ locally (distantly) samples.
+\end{enumerate}
 First, we show how the receiver's expected value from entertaining models that have steeper or shallower tradeoffs than the sender's affect her maximal expected utility.
 Suppose $\gamma > \delta$. 
 Given a sampling strategy $\sigma$, we have:
@@ -2309,14 +2411,19 @@ A similar argument takes cares of the case where $\delta = \underline{\delta}_j$
 \end{proof}
 \optimaltype*
 \begin{proof}
-Formal proof under construction, see broad sketches of pieces below.
-
-First we show that the optimal type space contains no non-degenerate intervals.
+Consider a sender model $f_S = \beta_0+\beta_1 - \delta x^2$.
+%First, we claim that for every open interval $(a,b) \in \Gamma = [0,\overline{\gamma}]$, there exists $\theta$ such that $\theta \cap (a,b) \neq \emptyset$.
+%Suppose by contradiction that such an interval existed with $\theta \cap (a,b) = \emptyset$ for all $\theta \in \Theta$.
+%Note that if $\delta \in (a,b)$, the receiver always thinks that the true model is $f_S$. 
+%However, for each $\delta \in (a,b)$ the sender can generate an improvement as follows.
+%The sender can create a type $\{\delta\}$ sender, who then strategically samples so that the receiver considers either $f_S$ or a set of models that lie above $f_S$ in expectation.
+%Since $(a,b)$ has positive measure with respect to $P_\delta^D$, integrating the sender's ex-ante utility across $(a,b)$ generates a strictly positive improvement, a contradiction.
+First, we show that $\Theta$ contains no non-degenerate intervals.
 Suppose by contradiction that there existed an interval of type $\theta = [\underline{\delta}_\theta,\overline{\delta}_\theta]$ with $\theta \subseteq \Gamma^\circ$.
 Suppose $\theta^\circ \neq \emptyset$ and consider $\delta \in \theta^\circ$.
 Conditional on seeing this model, the sender believes a model of the form $f_S(x) = \beta_0+\beta_1x-\delta x^2$ is the unique model.
 
-Now, for each each $\delta \in \theta^\circ$, $D$ can create a type $\{\delta\}$.
+Now, for each each $\delta \in \theta^\circ$, as before, $D$ can create a type $\{\delta\}$.
 This type strategically samples by setting $\sigma$ such that $\max_x f_S(x) \leq \max_x f_S(x) + (\mathbb{E}[\gamma|\delta])(\sigma^2-(x-x_\theta)^2)$.
 Thus, conditional on seeing a model of the form $\beta_0+\beta_1x-\delta x^2$, $R$ believes that $f_S(x)$ is either the true model or the model from the $\{\delta\}$ type.
 Let $q(\delta)$ be the conditional probability of the type $\{\delta\}$ sender relative to the original type $\theta$ sender.
@@ -2325,39 +2432,222 @@ Then, this generates a difference on the order of
 \int_{\underline{\delta}_\theta}^{\overline{\delta}_\theta}
 \max_x f_S(x) + q(\delta)\big(\overline{\gamma}_{\{\delta\}}-\delta\big)(\overline{\sigma}^2-(x-x_\theta)^2)-
 \max_x f_S(x)
-dP_\gamma^D(\delta \leq \mathbb{E}_\gamma^R[\gamma]| \delta \in \theta^\circ)
+dP_\delta^D(\delta \leq \mathbb{E}_\gamma^R[\gamma]| \delta \in \theta^\circ)
 \\
 +
 \int_{\underline{\delta}_\theta}^{\overline{\delta}_\theta}
 \max_x f_S(x) + q(\delta)\big(\underline{\gamma}_{\{\delta\}}-\delta\big)(\underline{\sigma}^2-(x-x_\theta)^2)-
 \max_x f_S(x)
-dP_\gamma^D(\delta > \mathbb{E}_\gamma^R[\gamma]| \delta \in \theta^\circ)
+dP_\delta^D(\delta > \mathbb{E}_\gamma^R[\gamma]| \delta \in \theta^\circ)
 \end{align*}
 The first line considers any arbitrary senders who distantly sample.
 The second line considers any arbitrary senders who locally sample.
 In both cases, the gain is positive and is increasing in $q(\delta)$; i.e., the gain is higher the more likely $R$ is to think that $f_S(x)$ came from type $\{\delta\}$.
 
 We are left to consider the boundary types of $\theta$: $\overline{\delta}_\theta$ and $\underline{\delta}_\theta$.
-Since $\theta$ eitehr locally or distantly samples, by Proposition \ref{prop:simplegain} one of $\overline{\delta}_\theta$ or $\underline{\delta}_\theta$ gains and one loses from the existence of an arbitrary type.
-However, because these singletons have measure $0$ in the prior, replacing each with an arbitrary type has no effect on expected utility.
-Thus, the optimal type space contains no intervals, and is only composed of singletons.
-By the first part of the result, this set of singletons must cover all of $\Gamma$, meaning $\Theta = \{\{\delta\} : \delta \in \Gamma\}$ is the optimal set of types.
-Returning to $D$'s ex-ante utility, $S$ chooses the density of each $\{\delta\}$ to be precisely the density in the prior. 
+Since $\theta$ either samples as a generalist or specialist, by Proposition \ref{prop:simplegain} one of $\overline{\delta}_\theta$ or $\underline{\delta}_\theta$ gains and one loses from the existence of an arbitrary type.
+However, because $P_\delta^D$ is continuous, these singletons have measure $0$ with respect to the prior. Thus, replacing each with an arbitrary type has no effect on expected utility.
+
+Hence, every type space $\Theta$ with non-degenerate intervals can be improved upon by replacing all the senders in that interval with singleton.
+The maximal set of singletons covers all of $\Gamma$, meaning $\Theta = \{\{\delta\} : \delta \in \Gamma\}$ maximizes the objective.
+
+We are left to determine the distribution of types $T$.  Note that our objective can be rewritten thus as:
+\begin{align*}
+\max_{T \in \mathcal{P}([0,\overline{\gamma}])}
+\int_{\mathbb{R}}
+\int_{\mathbb{R}}
+\int_0^{\overline{\gamma}}
+\max_{\sigma_\delta,x_\delta,x} \beta_0+\beta_1x-\delta x^2 + q(\delta,T)(\mathbb{E}_\gamma^R[\gamma]-\delta)\big(\sigma_\delta^2-(x-x_\delta)^2\big)dP_\delta^D(\delta)dP_1^D(\beta_1)dP_0^D(\beta_0).
+\end{align*}
+where $\mathcal{P}([0,\overline{\gamma}])$ is the set of measures over $[0,\overline{\gamma}]$ and $q(\delta,T)$ is the posterior over whether the model came from $D$ or a type $\{\delta\}$ sender, defined as
+\begin{align*}
+q(T,\delta) = 
+\begin{cases}
+\frac{(1-q_0)t(\delta)}{(1-q_0)t(\delta)+q_0p_\delta^D(\delta)} & T \text{ admits density } t(\delta) \\
+1 & T(\{\delta\}) \text{ has a mass point}	
+\end{cases}
+\end{align*}
+Note that because $P_\delta^D$ is continuous, there are no gains to placing a nonzero measure on any singleton $\delta$ value.
+Moreover, note that at the optimum with respect to $\sigma_\delta,x_\delta,x^*$, the function 
+\begin{align*}
+h(\delta) = (\mathbb{E}_\gamma^R[\gamma]-\delta)\big(\sigma_\delta^2-(x^*-x_\delta)^2\big)
+\end{align*}
+is given by a check function with a minimum at $\mathbb{E}_\gamma^R[\gamma]$, i.e. there exist $h_1,h_2 > 0$ such that
+\begin{align*}
+h(\delta) =
+\begin{cases}
+h_1(\mathbb{E}_\gamma^R[\gamma]-\delta) & \delta \in [0,\mathbb{E}_\gamma^R]
+\\
+h_2(\delta-\mathbb{E}_\gamma^R[\gamma]) & \delta \in [\mathbb{E}_\gamma^R,\overline{\gamma}]
+\end{cases}
+\end{align*}
+Thus, our problem boils down to
+\begin{align*}
+\max_{t(\delta)}
+\int_0^{\overline{\gamma}}\frac{(1-q_0) t(\delta)}{(1-q_0)t(\delta)+q_0p_\delta^D(\delta)}h	(\delta)p_\delta^D(\delta)d\delta \text{ s.t. } t(\delta) \geq 0 \text{ and } \int_0^{\overline{\gamma}} t(\delta)d\delta = 1
+\end{align*}
+First, note that, pointwise, we have
+\begin{align*}
+\frac{\partial^2 }{\partial t^2} \frac{(1-q_0) t}{(1-q_0) t + (1-q)p_\delta^D(\delta)}p_\delta^D(\delta)h(\delta)	 < 0,
+\end{align*}
+i.e. the objective is concave in $t=t(\delta)$ for each $\delta$.
+%The objective is also strictly increasing in $t=t(\delta)$ for all $\delta \neq \mathbb{E}_\gamma^R[\gamma]$ (in which case it is constant in $\delta$), meaning the $t(\delta)=0$ constraint binds at at most one point.
+This means, using a calculus of variations approach, we can write a Lagrangian as:
+\begin{align*}
+\mathcal{L}(t,\lambda)	
+=\int_0^{\overline{\gamma}}\frac{(1-q_0) t(\delta)}{(1-q_0)t(\delta)+q_0p_\delta^D(\delta)}h	(\delta)p_\delta^D(\delta)+\lambda \big(\frac{1}{\overline{\gamma}}-t(\delta)\big)d\delta.
+\end{align*}
+This yields the following for interior solutions.
+\begin{align*}
+\frac{(1-q_0)\big((1-q_0)t(\delta)+q_0p_\delta^D(\delta)\big)-(1-q_0)^2t(\delta)}{((1-q_0)t(\delta)+q_0p_\delta^D(\delta))^2}h	(\delta)p_\delta^D(\delta)
+=\frac{(1-q_0)q_0p_\delta^D(\delta)}{((1-q_0)t(\delta)+q_0p_\delta^D(\delta))^2}h	(\delta)p_\delta^D(\delta)	= \lambda
+\\
+\implies \sqrt{(1-q_0)q_0p_\delta^{D2}(\delta)h(\delta)} = \sqrt{\lambda}\big((1-q_0)t(\delta)+q_0p_\delta^D(\delta)\big)
+\\
+\implies t(\delta) = \sqrt{\frac{(1-q_0)q_0p_\delta^{D2}(\delta)h(\delta)}{\lambda(1-q_0)^2}}-\frac{q_0}{1-q_0}p_\delta^D(\delta)
+\\
+\implies t(\delta) = p_\delta^D(\delta)\bigg(\sqrt{\frac{q_0h(\delta)}{(1-q_0)\lambda}}-\frac{q_0}{1-q_0}\bigg)
+\end{align*}
+We note, however, that we may not always have an interior solution, e.g. when $h(\delta) = 0$.
+This means
+\begin{align*}
+t(\delta) = \max\bigg\{0,	p_\delta^D(\delta)\bigg(\sqrt{\frac{q_0h(\delta)}{(1-q_0)K}}-\frac{q_0}{1-q_0}\bigg)\bigg\}
+\end{align*}
+where $K$ solves $\int_0^1 t(\delta)d\delta = 1$.
 \end{proof}
 
-\optimaltypediscrete*
+\polarizationlimit*
 \begin{proof}
-Formal proof under construction. Sketch is as follows.
-The logic for the proof with discrete types is largely the same, except that we have type pooling.
-Consider two $\gamma_i$ values such that $\gamma_i,\gamma_{i+1}$	 are next to each other. We either under or overestimate tradeoffs (suppose wlog that we overestimate).
-This generates a ``loss'' from $\gamma_i$ and a ``gain'' for $\gamma_{i+1}$.
-This ensures we only entertain models with $\gamma \leq \gamma_{i+1}$ instead of $\gamma \neq \gamma_{i+1}$ (which are still on average ``above'' $\gamma$, just by less.
-If the weight on $\gamma_{i}$ grows vanishingly small, it's optimal to pool these two together.
+Let $r = \frac{q_0}{1-q_0}$ so that
+\begin{align*}
+t(\delta) = 	\max\bigg\{0,	p_\delta^D(\delta)\bigg(\sqrt{\frac{rh(\delta)}{K}}-r\bigg)\bigg\}.
+\end{align*}
+Next, note that because $h(\delta)$ is either strictly increasing or decreasing, there exist at least one and up to two points such that $\sqrt{\frac{rh(\delta)}{K}}-r =0$.
+As in the hypothesis, let $\underline{\delta}_0$ be the lower of these points (if such a point does not exist let it $=0$) and the higher $\overline{\delta}_0$ (if such a point does not exist let it $=\overline{\gamma}$).
+Note that the expression is then strictly positive and decreasing (increasing) in $\delta$ for $\delta <\underline{\delta}_0$ ($\delta > \overline{\delta}_0$).
+Note that because $K$ also changes with $r$, we have
+\begin{align*}
+h(\overline{\delta}_0)=K(r)r=h(\underline{\delta}_0)
+\implies
+h'(\overline{\delta}_0)\overline{\delta}_0'(r)=rK'(r) + K(r) = h'(\underline{\delta}_0)\underline{\delta}_0'(r)
+\end{align*}
+$K(r)$ is implicitly determined by
+\begin{align*}
+\int_0^{\underline{\delta}_0(r)}	p_\delta^D(\delta)\bigg(\sqrt{\frac{rh(\delta)}{K(r)}}-r\bigg)d\delta
++
+\int_{\overline{\delta}_0}^1
+p_\delta^D(\delta)\bigg(\sqrt{\frac{rh(\delta)}{K(r)}}-r\bigg)d\delta=1
+\end{align*}
+Meaning we have
+\begin{align*}
+&p_\delta^D(\delta)\bigg(\sqrt{\frac{rh(\underline{\delta}_0)}{K(r)}}-r\bigg)\underline{\delta}_0'(r)	
+-p_\delta^D(\delta)\bigg(\sqrt{\frac{rh(\overline{\delta}_0)}{K(r)}}-r\bigg)\overline{\delta}_0'(r)	
+\\
++
+&\int_0^{\underline{\delta}_0(r)}\frac{\partial}{\partial r}	p_\delta^D(\delta)\bigg(\sqrt{\frac{rh(\delta)}{K(r)}}-r\bigg)d\delta
++
+\int_{\overline{\delta}_0}^1\frac{\partial}{\partial r}
+p_\delta^D(\delta)\bigg(\sqrt{\frac{rh(\delta)}{K(r)}}-r\bigg)d\delta =0
+\end{align*}
+The first line is $=0$ by the definition of $\overline{\delta}_0$ and $\underline{\delta}_0$.
+Define $A(r) := [0,\underline{\delta}_0]\cup[\overline{\delta}_0,1]$.
+This leaves:
+\begin{align*}
+\int_{A(r)}	p_\delta^D(\delta)\bigg(\frac{\sqrt{h(\delta)}(K(r)-rK'(r))}{2\sqrt{r}K(r)^{3/2}}-1\bigg)d\delta
+=0	
+\\
+\frac{K(r)-rK'(r)}{2\sqrt{r}K(r)^{3/2}}\int_{A(r)}	p_\delta^D(\delta)\sqrt{h(\delta)}d\delta
+=\int_{A(r)}	p_\delta^D(\delta)d\delta
+\\
+rK'(r)= K(r)
+-2\sqrt{r}K(r)^{3/2}\frac{\int_{A(r)}	p_\delta^D(\delta)d\delta}{\int_{A(r)}	p_\delta^D(\delta)\sqrt{h(\delta)}d\delta}
+\end{align*}
+Meaning that we have
+\begin{align*}
+rK'(r) + K(r)
+&= 2K(r)
+-2\sqrt{r}K(r)^{3/2}\frac{\int_{A(r)}	p_\delta^D(\delta)d\delta}{\int_{A(r)}	p_\delta^D(\delta)\sqrt{h(\delta)}d\delta}
+\\
+&=2K(r)\bigg(1-\sqrt{rK(r)}\frac{\int_{A(r)}	p_\delta^D(\delta)d\delta}{\int_{A(r)}	p_\delta^D(\delta)\sqrt{h(\delta)}d\delta}\bigg)
+\end{align*}
+This is $\geq 0$ if and only if
+\begin{align*}
+\int_{A(r)}	p_\delta^D(\delta)\sqrt{h(\delta)}d\delta
+\geq \int_{A(r)}	p_\delta^D(\delta)\sqrt{rK(r)}d\delta
+\end{align*}
+But note that on $A(r)$ we have
+\begin{align*}
+\sqrt{\frac{rh(\delta)}{K(r)}}-r > 0
+\implies
+h(\delta) > rK(r)
+\end{align*}
+Thus, we have
+\begin{align*}
+h'(\overline{\delta}_0)\overline{\delta}_0'(r)> 0 \text{ and } = h'(\underline{\delta}_0)\underline{\delta}_0'(r)>0
+\end{align*}
+meaning $\overline{\delta}_0$ is increasing in $r$ and $\underline{\delta}_0$ is decreasing in $r$.
 
-To see that pooling involves at most two types, note that if there were three types, the ``middle'' type would always be the true model if it realized.
-So we are better off either pooling two together and ``breaking out'' the third or breaking out all three.
+Finally, we investigate the limiting cases as $r \to 0$ and $1$.
+As $r \to 0$, note that we have $K(r)r = 0 \implies \overline{\delta}_0=\underline{\delta}_0 = \mathbb{E}_R^\gamma[\gamma]$. This means for $r\to 0$ we have
+\begin{align*}
+\int_0^{\overline{\gamma}}p_\delta^D(\delta)\bigg(\sqrt{\frac{rh(\delta)}{K(r)}} -r\bigg)d\delta
+\approx 1
+\implies
+\sqrt{\frac{r}{K(r)}}\int_0^{\overline{\gamma}}p_\delta^D(\delta)\sqrt{h(\delta)}d\delta \approx 1+r
+\\
+\implies
+K(r) \approx \frac{r\bigg(\int_0^{\overline{\gamma}}p_\delta^D(\delta)\sqrt{h(\delta)}d\delta\bigg)^2}{(1+r)^2}.
+\\
+\implies t(\delta) \approx 
+p_\delta^D(\delta)\bigg(\sqrt{\frac{rh(\delta)}{\frac{r\bigg(\int_0^{\overline{\gamma}}p_\delta^D(\delta)\sqrt{h(\delta)}d\delta\bigg)^2}{(1+r)^2}}}-r\bigg)
+\\
+=
+c\bigg((1+r)\frac{\sqrt{h(\delta)}}{\int_0^{\overline{\gamma}}p_\delta^D(\delta)\sqrt{h(\delta)}d\delta}-r\bigg)
+\end{align*}
+Sending $r \to 0$ then gives
+\begin{align*}
+t(\delta) = \frac{p_\delta^D(\delta)\sqrt{h(\delta)}}{\int_0^{\overline{\gamma}}p_\delta^D(\delta)\sqrt{h(\delta)}d\delta}.	
+\end{align*}
+For the case where $r \to 1$, we have
+
+%
+%
+%First, recall also that that $K$ is implicitly determined by
+%\begin{align*}
+%\int_0^1 \max\bigg\{0,	p_\delta^D(\delta)\bigg(\sqrt{\frac{rh(\delta)}{K}}-r\bigg)\bigg\} d\delta = 1.		
+%\end{align*}
+%Differentiating implicitly with resepct to $r$ gives
+%\begin{align*}
+%\int_0^1	
+%\end{align*}
+%
+
+
+%Note that $t(\delta) = 0$  when
+%\begin{align*}
+%p_\delta^D(\delta)\bigg(\sqrt{\frac{q_0h(\delta)}{(1-q_0)K}}-\frac{q_0}{1-q_0}=0
+%is implicitly determined by
+%\begin{align*}
+%\qquad
+%\int_0^1 \max\bigg\{0,	p_\delta^D(\delta)\bigg(\sqrt{\frac{q_0h(\delta)}{(1-q_0)K}}-\frac{q_0}{1-q_0}\bigg)\bigg\} d\delta = 1	
+%\end{align*}
 
 \end{proof}
+
+
+%\optimaltypediscrete*
+%\begin{proof}
+%Formal proof under construction. Sketch is as follows.
+%The logic for the proof with discrete types is largely the same, except that we have type pooling.
+%Consider two $\gamma_i$ values such that $\gamma_i,\gamma_{i+1}$	 are next to each other. We either under or overestimate tradeoffs (suppose wlog that we overestimate).
+%This generates a ``loss'' from $\gamma_i$ and a ``gain'' for $\gamma_{i+1}$.
+%This ensures we only entertain models with $\gamma \leq \gamma_{i+1}$ instead of $\gamma \neq \gamma_{i+1}$ (which are still on average ``above'' $\gamma$, just by less.
+%If the weight on $\gamma_{i}$ grows vanishingly small, it's optimal to pool these two together.
+%
+%To see that pooling involves at most two types, note that if there were three types, the ``middle'' type would always be the true model if it realized.
+%So we are better off either pooling two together and ``breaking out'' the third or breaking out all three.
+%
+%\end{proof}
 
 
 
